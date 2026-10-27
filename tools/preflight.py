@@ -1,4 +1,4 @@
-"""Full pre-flight check for the Trader Ships workshop upload.
+﻿"""Full pre-flight check for the Trader Ships workshop upload.
 
 Runs the checklist from the local RimWorld publishing guide (section 9) so we
 do not discover a problem after the item is already public.
@@ -12,7 +12,7 @@ import sys
 import xml.etree.ElementTree as ET
 
 MOD = pathlib.Path(r"H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev")
-REPO = pathlib.Path(r"E:\AI\mods\TraderShips")
+REPO = pathlib.Path(r"E:\AI\mods\rimworld\TraderShips")
 
 ok = []
 warn = []

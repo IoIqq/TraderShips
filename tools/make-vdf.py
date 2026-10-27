@@ -1,4 +1,4 @@
-"""Generate the steamcmd workshop VDF for Trader Ships (Continued).
+﻿"""Generate the steamcmd workshop VDF for Trader Ships (Continued).
 
 Modelled on the working CrematoriumValueFilter upload, which keeps the VDF
 description as a single escaped line (literal \\n sequences, not real newlines).
@@ -11,7 +11,7 @@ import sys
 import pathlib
 
 MOD_DIR = pathlib.Path(r"H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev")
-REPO = pathlib.Path(r"E:\AI\mods\TraderShips")
+REPO = pathlib.Path(r"E:\AI\mods\rimworld\TraderShips")
 OUT = REPO / "workshop" / "workshopitem.vdf"
 DESC_SRC = REPO / "workshop-description.txt"
 

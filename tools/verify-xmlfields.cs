@@ -1,4 +1,4 @@
-// 静态校验：mod 的 XML def 中使用的字段名，是否都真实存在于 1.7 的对应 C# 类型上。
+﻿// 静态校验：mod 的 XML def 中使用的字段名，是否都真实存在于 1.7 的对应 C# 类型上。
 // 目的：捕获 1.7 中被改名/删除的 XML 字段（这类问题只在加载期报错）。
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 string rwDir = @"H:\steam\steamapps\common\RimWorld";
-string defsDir = @"E:\AI\mods\TraderShips\1.7\Defs";
+string defsDir = @"E:\AI\mods\rimworld\TraderShips\1.7\Defs";
 
 using var fs = File.OpenRead(Path.Combine(rwDir, "Assembly-CSharp.dll"));
 using var pe = new PEReader(fs);
@@ -89,7 +89,7 @@ var skip = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 };
 
 var elementNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-foreach (var file in Directory.GetFiles(defsDir, "*.xml").Concat(Directory.GetFiles(@"E:\AI\mods\TraderShips\1.7\Patches", "*.xml")))
+foreach (var file in Directory.GetFiles(defsDir, "*.xml").Concat(Directory.GetFiles(@"E:\AI\mods\rimworld\TraderShips\1.7\Patches", "*.xml")))
 {
     try
     {

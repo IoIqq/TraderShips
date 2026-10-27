@@ -1,4 +1,4 @@
-# Trader Ships - deploy 1.7 build to the RimWorld Mods folder.
+﻿# Trader Ships - deploy 1.7 build to the RimWorld Mods folder.
 # Pure-ASCII on purpose: Windows PowerShell 5.1 misreads UTF-8 files without a BOM.
 #
 # IMPORTANT: this script rebuilds $Target from scratch each run. Copy-Item -Recurse into an
@@ -6,7 +6,7 @@
 # start from a clean destination.
 param(
     [Parameter(Mandatory = $false)]
-    [string]$Source = 'E:\AI\mods\TraderShips',
+    [string]$Source = 'E:\AI\mods\rimworld\TraderShips',
     [Parameter(Mandatory = $false)]
     [string]$Target = 'H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev'
 )

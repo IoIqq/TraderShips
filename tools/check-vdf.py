@@ -1,4 +1,4 @@
-"""Sanity-check the generated workshop VDF before handing it to steamcmd.
+﻿"""Sanity-check the generated workshop VDF before handing it to steamcmd.
 
 Verifies that the description is a single physical line, that quotes and
 backslashes are escaped exactly once, and that the escaped form round-trips
@@ -6,8 +6,8 @@ back to the original text.
 """
 import pathlib
 
-VDF = pathlib.Path(r"E:\AI\mods\TraderShips\workshop\workshopitem.vdf")
-SRC = pathlib.Path(r"E:\AI\mods\TraderShips\workshop-description.txt")
+VDF = pathlib.Path(r"E:\AI\mods\rimworld\TraderShips\workshop\workshopitem.vdf")
+SRC = pathlib.Path(r"E:\AI\mods\rimworld\TraderShips\workshop-description.txt")
 
 lines = VDF.read_text(encoding="utf-8").splitlines()
 print(f"total lines: {len(lines)}")

@@ -1,10 +1,10 @@
-// 产物验证：确认编译出的 TraderShips.dll 中，XML def 所需的所有类型真实存在，
+﻿// 产物验证：确认编译出的 TraderShips.dll 中，XML def 所需的所有类型真实存在，
 // 并检查目标框架与程序集引用是否指向 1.7 的运行时。
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 
-string dll = @"E:\AI\mods\TraderShips\1.7\Assemblies\TraderShips.dll";
+string dll = @"E:\AI\mods\rimworld\TraderShips\1.7\Assemblies\TraderShips.dll";
 
 using var fs = File.OpenRead(dll);
 using var pe = new PEReader(fs);

@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
@@ -19,7 +19,7 @@ cd /d "%~dp0"
 
 set "STEAMCMD=H:\steamcmd\steamcmd.exe"
 set "PY=C:\Users\Adm\AppData\Roaming\dsh-desktop\harness\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe"
-set "REPO=E:\AI\mods\TraderShips"
+set "REPO=E:\AI\mods\rimworld\TraderShips"
 set "VDF=%REPO%\workshop\workshopitem.vdf"
 set "MODDIR=H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev"
 set "DLL=%MODDIR%\1.7\Assemblies\TraderShips.dll"

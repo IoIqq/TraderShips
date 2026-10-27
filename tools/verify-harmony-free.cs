@@ -1,9 +1,9 @@
-// 确认编译产物不再引用 0Harmony，且不含 [HarmonyPatch] 特性——
+﻿// 确认编译产物不再引用 0Harmony，且不含 [HarmonyPatch] 特性——
 // 只要还有引用，Harmony 缺失时 CLR 仍会在枚举类型时抛 TypeLoadException。
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 
-string dll = @"E:\AI\mods\TraderShips\1.7\Assemblies\TraderShips.dll";
+string dll = @"E:\AI\mods\rimworld\TraderShips\1.7\Assemblies\TraderShips.dll";
 using var fs = File.OpenRead(dll);
 using var pe = new PEReader(fs);
 var md = pe.GetMetadataReader();

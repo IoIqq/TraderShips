@@ -1,19 +1,19 @@
-# Steam 创意工坊上传步骤
+﻿# Steam 创意工坊上传步骤
 
 ## 前置状态
 
 - steamcmd：`H:\steamcmd\steamcmd.exe`（已存在，**尚未登录**）
 - 部署目录：`H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev`（已就绪，93 个文件）
-- VDF：`E:\AI\mods\TraderShips\workshop\workshopitem.vdf`（已生成并校验）
+- VDF：`E:\AI\mods\rimworld\TraderShips\workshop\workshopitem.vdf`（已生成并校验）
 
 ## 一、一条命令搞定（推荐）
 
-**双击 `E:\AI\mods\TraderShips\upload.bat`** —— 会提示输入 Steam 账号名，密码由 steamcmd 自己询问。
+**双击 `E:\AI\mods\rimworld\TraderShips\upload.bat`** —— 会提示输入 Steam 账号名，密码由 steamcmd 自己询问。
 
 或在命令行里带参数：
 
 ```cmd
-E:\AI\mods\TraderShips\upload.bat IoIqq
+E:\AI\mods\rimworld\TraderShips\upload.bat IoIqq
 ```
 
 脚本依次做：
@@ -46,7 +46,7 @@ H:\steamcmd\steamcmd.exe +login 你的账号
 **上传**
 
 ```bat
-H:\steamcmd\steamcmd.exe +login 你的账号 "+workshop_build_item E:\AI\mods\TraderShips\workshop\workshopitem.vdf" +quit
+H:\steamcmd\steamcmd.exe +login 你的账号 "+workshop_build_item E:\AI\mods\rimworld\TraderShips\workshop\workshopitem.vdf" +quit
 ```
 
 > 按 steamcmd 官方约定，带参数的命令**连同 `+` 一起加引号**，路径含空格时才不会断。
@@ -58,7 +58,7 @@ H:\steamcmd\steamcmd.exe +login 你的账号 "+workshop_build_item E:\AI\mods\Tr
 **更新已有条目**：把 ID 写进 VDF，再重跑上传。
 
 ```bat
-python E:\AI\mods\TraderShips\tools\make-vdf.py 3820000000
+python E:\AI\mods\rimworld\TraderShips\tools\make-vdf.py 3820000000
 ```
 
 > ⚠️ `steamcmd` **不会自动生成 `PublishedFileId.txt`**，只有该文件已存在时才复用其中的 ID。
@@ -78,7 +78,7 @@ Select-String -Path 'H:\steamcmd\logs\workshop_log.txt' -Pattern 'Upload finishe
 
 ```powershell
 '3820000000' | Out-File -Encoding ascii -NoNewline "H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev\About\PublishedFileId.txt"
-'3820000000' | Out-File -Encoding ascii -NoNewline "E:\AI\mods\TraderShips\About\PublishedFileId.txt"
+'3820000000' | Out-File -Encoding ascii -NoNewline "E:\AI\mods\rimworld\TraderShips\About\PublishedFileId.txt"
 ```
 
 > `deploy-1.7.ps1` 的行为是「源仓库没有 `PublishedFileId.txt` 就删掉目标里的」。
@@ -113,13 +113,13 @@ Select-String -Path 'H:\steamcmd\logs\workshop_log.txt' -Pattern 'Upload finishe
 改代码后（**先完全退出游戏**，否则 `CS2012` 写不进 DLL）：
 
 ```bash
-cd E:\AI\mods\TraderShips\Source
+cd E:\AI\mods\rimworld\TraderShips\Source
 DOTNET_CLI_HOME=/e/AI/tools/dotnet-home TMP=/e/AI/tools/tmp TEMP='E:\AI\tools\tmp' \
   "/e/AI/tools/dotnet10/dotnet.exe" build TraderShips17.csproj -c Release
 ```
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File E:\AI\mods\TraderShips\tools\deploy-1.7.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File E:\AI\mods\rimworld\TraderShips\tools\deploy-1.7.ps1
 ```
 
 然后重新上传（**必须带 publishedfileid**，否则会再建一个条目）。

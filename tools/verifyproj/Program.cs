@@ -1,9 +1,9 @@
-// 确认 Debug.cs 中的 [DebugAction] 特性是否真的被写进了 DLL，以及参数顺序是否正确。
+﻿// 确认 Debug.cs 中的 [DebugAction] 特性是否真的被写进了 DLL，以及参数顺序是否正确。
 // 如果这里有，但游戏里看不到，说明是运行时扫描问题；如果这里就没有，说明编译/源码问题。
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 
-string dll = @"E:\AI\mods\TraderShips\1.7\Assemblies\TraderShips.dll";
+string dll = @"E:\AI\mods\rimworld\TraderShips\1.7\Assemblies\TraderShips.dll";
 using var fs = File.OpenRead(dll);
 using var pe = new PEReader(fs);
 var md = pe.GetMetadataReader();

@@ -1,4 +1,4 @@
-# Trader Ships — RimWorld 1.7 (Waylith Engine) 移植说明
+﻿# Trader Ships — RimWorld 1.7 (Waylith Engine) 移植说明
 
 ## 背景结论（先纠正一个前提）
 
@@ -110,7 +110,7 @@ public override DrawStyleCategoryDef DrawStyleCategory => DrawStyleCategoryDefOf
 
 ```bash
 # 编译（注意需要 .NET 10 SDK，系统自带的是 9.0，已装在 E:\AI\tools\dotnet10）
-cd E:\AI\mods\TraderShips\Source
+cd E:\AI\mods\rimworld\TraderShips\Source
 DOTNET_CLI_HOME=/e/AI/tools/dotnet-home \
 TMP=/e/AI/tools/tmp TEMP='E:\AI\tools\tmp' \
 "/e/AI/tools/dotnet10/dotnet.exe" build TraderShips17.csproj -c Release
@@ -118,7 +118,7 @@ TMP=/e/AI/tools/tmp TEMP='E:\AI\tools\tmp' \
 
 ```powershell
 # 部署到游戏 Mods 目录（每次会先清空目标再复制，避免目录嵌套）
-powershell -NoProfile -ExecutionPolicy Bypass -File E:\AI\mods\TraderShips\tools\deploy-1.7.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File E:\AI\mods\rimworld\TraderShips\tools\deploy-1.7.ps1
 ```
 
 部署位置：`H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev`
