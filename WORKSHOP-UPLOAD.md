@@ -8,18 +8,36 @@
 
 ## 一、一条命令搞定（推荐）
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File E:\AI\mods\TraderShips\tools\upload-workshop.ps1 -Account <你的账号>
+**双击 `E:\AI\mods\TraderShips\upload.bat`** —— 会提示输入 Steam 账号名，密码由 steamcmd 自己询问。
+
+或在命令行里带参数：
+
+```cmd
+E:\AI\mods\TraderShips\upload.bat IoIqq
 ```
 
-脚本会依次检查：steamcmd 存在 → VDF 存在 → DLL 存在 → **无 GUID 缓存 DLL**，全部通过才调用上传。密码由 steamcmd 自己交互询问，脚本不接触。
+脚本依次做：
 
-> 别用 `.bat` 版本：本机 `cmd.exe` 解析含中文的路径会崩（会把 `setlocal` 拆成 `bledelayedexpansion`），
-> 所以改用 PowerShell。这个坑是实测踩到的。
+```
+[1/7] 从 workshop-description.txt 重新生成 VDF
+[2/7] 跑 28 项预检，不通过就停
+[3/7] 检查 steamcmd
+[4/7] 检查 VDF
+[5/7] 检查 DLL 唯一性 + 拦截 GUID 缓存
+[6/7] 显示新建还是更新
+[7/7] 上传
+```
+
+**上传后不只看退出码**——`steamcmd` 的退出码不可靠（指南 4.7 节）。脚本会去日志里找
+`Upload finished for workshop item <ID> : OK`，找到才算成功，并把 ID **自动写入两个位置**，不用手动拷贝。
+
+> 为什么是 `.bat` 但放在仓库根目录：`cmd.exe` 解析含中文的路径会崩（把 `setlocal` 拆成
+> `bledelayedexpansion`）。放在全英文路径的根目录才稳。同理，脚本里 `cd /d "%~dp0"` 保证
+> 双击时工作目录正确——否则会在 `C:\WINDOWS\system32` 下运行。
 
 ## 二、手动方式
 
-**登录**（可选，登录态会保存在 `H:\steamcmd\config\config.vdf`）
+**登录**（登录态缓存在 `H:\steamcmd\config\config.vdf`；密码不会被保存）
 
 ```bat
 H:\steamcmd\steamcmd.exe +login 你的账号
@@ -28,8 +46,10 @@ H:\steamcmd\steamcmd.exe +login 你的账号
 **上传**
 
 ```bat
-H:\steamcmd\steamcmd.exe +login 你的账号 +workshop_build_item "E:\AI\mods\TraderShips\workshop\workshopitem.vdf" +quit
+H:\steamcmd\steamcmd.exe +login 你的账号 "+workshop_build_item E:\AI\mods\TraderShips\workshop\workshopitem.vdf" +quit
 ```
+
+> 按 steamcmd 官方约定，带参数的命令**连同 `+` 一起加引号**，路径含空格时才不会断。
 
 ## 三、后续更新
 
@@ -46,7 +66,9 @@ python E:\AI\mods\TraderShips\tools\make-vdf.py 3820000000
 
 ## 四、上传后必做
 
-从日志里取 ID（`H:\steamcmd\logs\workshop_log.txt`，找 `Upload finished for workshop item <ID>`）：
+`upload.bat` 会**自动完成这一步**——成功时从日志提取 ID 并写入两个位置。
+
+如果用了手动命令，或脚本提示 ID 无法自动读取，从日志里取：
 
 ```powershell
 Select-String -Path 'H:\steamcmd\logs\workshop_log.txt' -Pattern 'Upload finished for workshop item (\d+)' | Select-Object -Last 1
