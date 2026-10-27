@@ -1,115 +1,93 @@
-# Steam 创意工坊上传清单
+# Steam 创意工坊上传步骤
 
-## 一、上传方式
+## 前置状态
 
-用 **RimWorld 自带的 Mod Uploader**（最省事，不会漏文件）：
+- steamcmd：`H:\steamcmd\steamcmd.exe`（已存在，**尚未登录**）
+- 部署目录：`H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev`（已就绪，93 个文件）
+- VDF：`E:\AI\mods\TraderShips\workshop\workshopitem.vdf`（已生成并校验）
 
-```
-H:\steam\steamapps\common\RimWorld\ModUpdater.exe
-```
+## 一、登录 steamcmd
 
-启动后它会列出 `Mods` 目录下的模组，选中 `TraderShipsDev` 即可。
-
-或者用第三方工具 **RimSort / RimPy**，打包成 `.zip` 再手动上传。
-
-> 注意：`ModUpdater.exe` 上传前会读取 `About/PublishedFileId.txt`。
-> 这个文件我已经删掉了，所以会**新建一个工坊条目**并自动写入新 ID。
-> 如果文件还在，它会尝试更新那个旧条目（原版 2046222331）。
-
-## 二、上传前必须确认的三件事
-
-### 1. `About` 目录内容
-
-```
-About/
-├── About.xml          ← 部署时由 About-1.7.xml 复制而来
-├── preview.png        ← 工坊缩略图（当前是原版美术，建议换成自己的）
-└── (无 PublishedFileId.txt  ← 正确，首次上传后自动生成)
+```bat
+H:\steamcmd\steamcmd.exe +login <你的Steam账号>
 ```
 
-### 2. 检查部署目录确实是干净的最新版
+进去后按提示输入密码，有 Steam Guard 会要求验证码。登录成功后再执行 `quit`。
+
+登录态保存在 `H:\steamcmd\config\config.vdf`，之后不用重复登录。
+
+## 二、上传
+
+**首次上传**（创建新条目，VDF 里 `publishedfileid` 必须是 `0`）：
+
+```bat
+H:\steamcmd\steamcmd.exe +login <账号> +workshop_build_item "E:\AI\mods\TraderShips\workshop\workshopitem.vdf" +quit
+```
+
+成功后会打印新条目的 `PublishedFileId`。
+
+**后续更新**（改已有条目）：
+
+1. 把 ID 写进 VDF：
+
+```bat
+python E:\AI\mods\TraderShips\tools\make-vdf.py 3820000000
+```
+
+2. 重跑同一条上传命令
+
+## 三、上传后要做的事
+
+拿到 PublishedFileId 后，把它告诉我，或者自己执行：
+
+```bat
+echo 3820000000 > "H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev\About\PublishedFileId.txt"
+```
+
+同时把源仓库里也建一份（下次部署会带上）：
+
+```bat
+echo 3820000000 > "E:\AI\mods\TraderShips\About\PublishedFileId.txt"
+```
+
+> 注意：`deploy-1.7.ps1` 已改成「源仓库没有 PublishedFileId.txt 就删掉目标里的」。
+> 所以源仓库那份必须存在，否则每次部署都会把游戏目录里的清掉。
+
+## 四、检查清单
+
+上传前已确认：
+
+- [x] `About/About.xml`：名称、作者、packageId、版本、依赖、loadAfter
+- [x] `About/preview.png`：你提供的封面图（533×300）
+- [x] `1.7/Assemblies/TraderShips.dll`：只有一个 DLL，无 `.deps.json` 残留
+- [x] `Languages/`：英 / 简中 / 繁中 / 西
+- [x] `LoadFolders.xml`：`<v1.7>` 正确
+- [x] `PublishedFileId.txt` **已删除**（否则会覆盖原作者 AUTOMATIC1111 的页面）
+- [x] VDF 转义校验通过（裸引号 0，往返一致）
+
+## 五、常见失败原因
+
+| 现象 | 原因 |
+| --- | --- |
+| `Invalid workshop item` | `publishedfileid` 写了别人的 ID |
+| `Fail to build workshop item` | `contentfolder` 路径不存在或含特殊字符 |
+| 描述显示成一行乱码 | VDF 里用了真实换行，必须用字面 `\n` |
+| 上传后页面没有图 | `previewfile` 路径错误，或图不是 PNG |
+| 提示需要先登录 | `+login` 放在 `+workshop_build_item` 之前 |
+
+## 六、更新流程备忘
+
+改代码后：
+
+```bash
+cd E:\AI\mods\TraderShips\Source
+dotnet build TraderShips17.csproj -c Release
+```
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File E:\AI\mods\TraderShips\tools\deploy-1.7.ps1
 ```
 
-脚本每次会先清空目标目录。**不要**手工复制，`Copy-Item -Recurse` 到已存在目录会产生
-`1.7/1.7/` 这种嵌套结构（这个坑已经踩过一次）。
+然后重新上传（必须带 publishedfileid，否则会再建一个新条目）。
 
-### 3. 确认 `tools/` 不会被上传
-
-`ModUpdater.exe` 只上传 `Mods\TraderShipsDev`，而 `tools/` 在源仓库 `E:\AI\mods\TraderShips\tools`，
-不在部署目录里。不需要额外处理。
-
-## 三、About.xml 关键字段
-
-| 字段 | 值 | 说明 |
-| --- | --- | --- |
-| `name` | `Trader ships (continued)` | 工坊显示名 |
-| `packageId` | `IoIqq.traderships.continued` | 与原版 `automatic.traderships` 区分开，可并存 |
-| `author` | `AUTOMATIC1111, IoIqq` | 保留原作者 |
-| `supportedVersions` | `1.7` | |
-| `modVersion` | `1.7.0` | |
-| `modDependencies` | `brrainz.harmony` | 游戏内模组列表会显示为缺失依赖 |
-| `loadAfter` | `brrainz.harmony`, Royalty, Odyssey | 确保补丁在 Harmony 之后应用 |
-
-## 四、工坊简介
-
-直接用 `workshop-description.txt` 的内容，Steam 的 BBCode 格式：
-
-- `[h1]` `[h2]` 标题
-- `[b]` 加粗
-- `[list][*]` 列表
-- `[url]` 链接
-- `[hr][/hr]` 分隔线
-- `[i]` 斜体
-
-中英双语，英文在前。
-
-## 五、上传时填写的元数据
-
-**标题**（Steam 标题栏）：
-
-```
-Trader Ships (Continued)
-```
-
-**标签 / Tags**：
-
-```
-Gameplay
-Animals, Plants & Environment  ← 不要，没有
-```
-
-实际建议勾选：
-
-- `Gameplay`
-- `1.7`
-- `QoL`（可选，因为它替代轨道商船流程）
-
-**缩略图**：`About/preview.png`，建议 512×512 以上，1:1 或 16:9。
-
-## 六、上传后
-
-1. 工坊页面生成后，把新的 `PublishedFileId.txt` 提回源仓库的 `About/`
-   （部署脚本会一并复制，注意它现在不复制这个文件——需要的话我改脚本）
-2. 工坊页面的 `Change Notes` 首次写：
-
-```
-Initial release for RimWorld 1.7.
-
-Continuation of AUTOMATIC1111's Trader ships, ported to the Waylith engine.
-- Rebuilt for .NET 10 / Waylith
-- Harmony is now an optional dependency
-- Rendering and designator APIs updated for 1.7
-```
-
-## 七、许可与授权注意
-
-原版 Trader ships 的许可情况需要你自己确认。如果原仓库是 MIT/GPL，在 About 或工坊简介中
-保留原作者署名即可；如果是**未声明许可**（默认保留所有权利），严格来说需要原作者同意才能
-重新发布——这一点建议你先去原仓库确认，或者直接联系 AUTOMATIC1111。
-
-工坊简介里我已经写了：
-
-> If you are the original author and would prefer this not exist, contact me and I will take it down.
+记得同步改 `About/About-1.7.xml` 里的 `<modVersion>` 和 VDF 里的 `changenote`。

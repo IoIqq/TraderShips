@@ -50,6 +50,13 @@ If no landing zone is painted, ships fall back to Royalty ship landing beacons w
 [*] The orbital-trader replacement is optional and can be toggled off, so it will not fight with other mods that touch orbital traders.
 [/list]
 
+[h2]Source code[/h2]
+
+The full source, the 1.7 porting notes and the issue tracker are on GitHub:
+[url=https://github.com/IoIqq/TraderShips]github.com/IoIqq/TraderShips[/url]
+
+Bug reports and pull requests are welcome there. If you hit a rendering issue or a conflict with another mod, please include your log — it saves a lot of guessing.
+
 [h2]Credits[/h2]
 
 [list]
@@ -92,6 +99,13 @@ If you are the original author and would prefer this not exist, contact me and I
 [h2]存档[/h2]
 
 可以中途加入现有存档。不建议中途移除——地图上正在交易的飞船会消失，着陆区也会一并丢弃。
+
+[h2]源代码[/h2]
+
+完整源码、1.7 移植笔记和问题追踪都在 GitHub：
+[url=https://github.com/IoIqq/TraderShips]github.com/IoIqq/TraderShips[/url]
+
+欢迎在上面提 bug 或 PR。如果遇到渲染问题或与其他模组冲突，附上日志会省很多事。
 
 [h2]致谢[/h2]
 

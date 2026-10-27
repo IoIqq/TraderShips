@@ -10,3 +10,6 @@ tools/verifyproj/obj
 /_PublisherPlus.xml
 1.7/Assemblies/*.dll
 1.7/Assemblies/*.pdb
+
+# generated locally, contains absolute machine paths
+workshop/workshopitem.vdf
