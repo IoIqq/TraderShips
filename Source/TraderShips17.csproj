@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>TraderShips</AssemblyName>
+    <RootNamespace>TraderShips</RootNamespace>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>true</Optimize>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <NoWarn>CS0162;CS0168;CS0219;CS0414;CS0649;CS1591</NoWarn>
+    <RimWorldDir>H:\steam\steamapps\common\RimWorld</RimWorldDir>
+    <OutputPath>..\1.7\Assemblies\</OutputPath>
+    <!-- RimWorld 只用 Assembly.LoadFrom 加载 mod dll，不需要 deps.json / runtimeconfig -->
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="**\*.cs" Exclude="obj\**;bin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(RimWorldDir)\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityStubs">
+      <HintPath>$(RimWorldDir)\UnityStubs.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Waylith">
+      <HintPath>$(RimWorldDir)\Waylith.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!--
+      0Harmony is NOT referenced: it is an optional runtime dependency, and a compile-time
+      reference makes the CLR resolve HarmonyLib whenever the patch classes are inspected,
+      which throws TypeLoadException when Harmony is absent (that is exactly what killed
+      CreateModClasses in the 13:10 log). TraderShips.cs now resolves it via reflection.
+    -->
+  </ItemGroup>
+
+</Project>

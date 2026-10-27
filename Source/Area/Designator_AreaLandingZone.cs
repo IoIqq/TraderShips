@@ -24,7 +24,9 @@ namespace TraderShips
 
     public abstract class Designator_AreaLandingZone : Designator_Cells
     {
-        public override int DraggableDimensions => 2;
+        // 1.7 (Waylith): Designator.DraggableDimensions was removed; drag behaviour is now
+        // declared through the draw-style category, matching vanilla area designators.
+        public override DrawStyleCategoryDef DrawStyleCategory => DrawStyleCategoryDefOf.Areas;
         public override bool DragDrawMeasurements => true;
 
         public Designator_AreaLandingZone(DesignateMode m)

@@ -19,6 +19,15 @@ namespace TraderShips
         {
             ShipSpritePartDef def = DefDatabase<ShipSpritePartDef>.AllDefs.Where(x => x.category == category).RandomElement();
 
+            // Defensive: RandomElement returns null (with a warning) when no part def matches the
+            // category. Adding a part with a null def would later NRE inside
+            // ShipSprite.FinishCreating when it reads part.def.graphicData.drawSize.
+            if (def == null)
+            {
+                Log.WarningOnce("[TraderShips] No ShipSpritePartDef found for category '" + category + "'; skipping ship part.", category.GetHashCode());
+                return;
+            }
+
             sprite.parts.Add(new ShipSpritePart()
             {
                 def = def,

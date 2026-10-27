@@ -1,40 +1,50 @@
-﻿using HarmonyLib;
 using RimWorld;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TraderShips.Patch
 {
-    [HarmonyPatch(typeof(IncidentWorker_OrbitalTraderArrival), "CanFireNowSub")]
-    class PatchIncidentWorker_OrbitalTraderArrivalCanFireNowSub
+    // These are plain static methods, NOT [HarmonyPatch] classes.
+    //
+    // Attribute-driven patching would force a hard compile-time dependency on HarmonyLib: the
+    // CLR resolves attribute types as soon as it enumerates the type, so with Harmony absent
+    // RimWorld threw TypeLoadException for 'HarmonyLib.HarmonyPatch' and then reset ModsConfig.
+    // Patching reflectively from TraderShips.ApplyHarmonyPatches keeps Harmony strictly optional.
+    internal static class OrbitalTraderPatches
     {
-        public static bool Prefix(ref bool __result, IncidentParms parms)
+        public static bool CanFireNowSub_Prefix(ref bool __result, IncidentParms parms)
         {
-            if (TraderShips.settings.disableOrbital)
+            TraderShipsSettings settings = TraderShips.settings;
+            if (settings == null || !settings.disableOrbital)
             {
-                __result = (Globals.TraderShipsArrival.Worker as IncidentWorkerTraderShip).IsAllowed(parms);
-                return false;
+                return true;
             }
 
-            return true;
+            IncidentWorkerTraderShip worker = Globals.TraderShipsArrival?.Worker as IncidentWorkerTraderShip;
+            if (worker == null)
+            {
+                return true;
+            }
+
+            __result = worker.IsAllowed(parms);
+            return false;
         }
-    }
 
-    [HarmonyPatch(typeof(IncidentWorker_OrbitalTraderArrival), "TryExecuteWorker")]
-    class PatchIncidentWorker_OrbitalTraderArrivalTryExecuteWorker
-    {
-        public static bool Prefix(ref bool __result, IncidentParms parms)
+        public static bool TryExecuteWorker_Prefix(ref bool __result, IncidentParms parms)
         {
-            if (TraderShips.settings.disableOrbital)
+            TraderShipsSettings settings = TraderShips.settings;
+            if (settings == null || !settings.disableOrbital)
             {
-                __result = (Globals.TraderShipsArrival.Worker as IncidentWorkerTraderShip).TryExecuteWorkerPub(parms);
-                return false;
+                return true;
             }
 
-            return true;
+            IncidentWorkerTraderShip worker = Globals.TraderShipsArrival?.Worker as IncidentWorkerTraderShip;
+            if (worker == null)
+            {
+                return true;
+            }
+
+            __result = worker.TryExecuteWorkerPub(parms);
+            return false;
         }
     }
 }

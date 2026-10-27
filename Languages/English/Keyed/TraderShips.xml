@@ -35,4 +35,6 @@
 
   <TraderShipsQuestRequestInfo>Requesting: {0} ({1})</TraderShipsQuestRequestInfo>
 
+  <TraderShipsDebugOutOfBounds>Click inside the map to spawn a trade ship.</TraderShipsDebugOutOfBounds>
+
 </LanguageData>

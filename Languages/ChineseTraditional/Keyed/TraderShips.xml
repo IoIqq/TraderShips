@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+  <TraderShipsTitle>貿易飛船</TraderShipsTitle>
+
+  <TraderShipsSendAway>送走</TraderShipsSendAway>
+  <TraderShipsSendAwayDesc>請商人離開。</TraderShipsSendAwayDesc>
+  <TraderShipsLeavingIn>離開倒數：{0}</TraderShipsLeavingIn>
+  <TraderShipsArrival>一艘貿易飛船降落在附近。\n\n對方名叫{0}，屬於{1}。\n\n{2}</TraderShipsArrival>
+  <TraderShipsCrashName>貿易飛船墜毀</TraderShipsCrashName>
+  <TraderShipsCrash>一艘名叫{0}的貿易飛船在附近墜毀了。\n\n對方屬於{1}。\n\n部分貨物散落在四周。</TraderShipsCrash>
+  <TraderShipsLeavingDueToDamage>{0}因飛船受損正在離開。</TraderShipsLeavingDueToDamage>
+
+  <TraderShipsDisableOrbitalName>停用軌道商船</TraderShipsDisableOrbitalName>
+  <TraderShipsDisableOrbitalDesc>阻止軌道商船出現（只要本模組啟用，貿易飛船仍會到來）。</TraderShipsDisableOrbitalDesc>
+  <TraderShipsColorsName>飛船隨機配色</TraderShipsColorsName>
+  <TraderShipsColorsDesc>允許飛船擁有不同的顏色。</TraderShipsColorsDesc>
+  <TraderShipsRequireCommssConsoleName>需要通訊台</TraderShipsRequireCommssConsoleName>
+  <TraderShipsRequireCommssConsoleDesc>沒有通訊台時飛船不會到來。</TraderShipsRequireCommssConsoleDesc>
+  <TraderShipsEnableQuestsName>啟用任務</TraderShipsEnableQuestsName>
+  <TraderShipsEnableQuestsDesc>啟用與貿易飛船相關的任務。</TraderShipsEnableQuestsDesc>
+  <TraderShipsSaturationName>飽和度範圍</TraderShipsSaturationName>
+  <TraderShipsSaturationDesc>生成的飛船顏色為 HSV 色彩，飽和度限制在此範圍內（同時受 [0,100] 限制）。</TraderShipsSaturationDesc>
+  <TraderShipsValueName>明度範圍</TraderShipsValueName>
+  <TraderShipsValueDesc>生成的飛船顏色為 HSV 色彩，明度限制在此範圍內（同時受 [0,100] 限制）。</TraderShipsValueDesc>
+  <TraderShipsRerollColors>重新隨機配色</TraderShipsRerollColors>
+
+  <TraderShipsLandingZone>著陸區</TraderShipsLandingZone>
+  <TraderShipsLandingZoneExpandName>擴展著陸區</TraderShipsLandingZoneExpandName>
+  <TraderShipsLandingZoneExpandDesc>劃定一片區域，飛船會優先在此降落。飛船會嘗試降落在著陸區中心，因此若想容納多艘飛船，請分別劃定多個互不相交的區域。</TraderShipsLandingZoneExpandDesc>
+  <TraderShipsLandingZoneClearName>清除著陸區</TraderShipsLandingZoneClearName>
+  <TraderShipsLandingZoneClearDesc>移除著陸區，飛船將自行選擇降落地點。</TraderShipsLandingZoneClearDesc>
+
+  <TraderShipsLandingZoneBlocked>飛船無法在著陸區降落：{0}。</TraderShipsLandingZoneBlocked>
+  <TraderShipsBlockedBy>被{0_label}阻擋</TraderShipsBlockedBy>
+
+  <TraderShipsQuestRequestInfo>需求：{0}（{1}）</TraderShipsQuestRequestInfo>
+
+  <TraderShipsDebugOutOfBounds>請在地圖範圍內點擊以生成貿易飛船。</TraderShipsDebugOutOfBounds>
+
+</LanguageData>

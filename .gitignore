@@ -1,7 +1,12 @@
 
 .vs
 Source/obj
+Source/bin
+tools/verifyproj/bin
+tools/verifyproj/obj
 *.csproj.user
 0Harmony.xml
 /packages
 /_PublisherPlus.xml
+1.7/Assemblies/*.dll
+1.7/Assemblies/*.pdb

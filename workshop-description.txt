@@ -1,0 +1,98 @@
+[h1]Trader Ships (Continued)[/h1]
+
+[b]Trader spaceships now land on your map and trade with you directly[/b] — no orbital trader, no trade beacon needed.
+
+This is the [b]RimWorld 1.7 (Waylith engine)[/b] continuation of [b]AUTOMATIC1111's[/b] original [i]Trader ships[/i] mod. All original design, art and code are his work; this continuation exists only to keep the mod playable on 1.7 after the engine rewrite.
+
+[hr][/hr]
+
+[h2]What it does[/h2]
+
+[list]
+[*] A trader ship flies in, lands on your map, and opens for business like a visiting caravan.
+[*] Ships [b]prefer your landing zone[/b] — designate one and they will aim for it.
+[*] Trade directly with the ship; no orbital trader screen involved.
+[*] Send the ship away when you are done with it.
+[*] Occasionally a ship [b]crashes[/b] instead of landing, scattering chunks and survivors.
+[*] Fully configurable in [b]Options → Mod settings[/b]: you can keep vanilla orbital traders around if you want both.
+[/list]
+
+[h2]Why no trade beacon?[/h2]
+
+Because the ship is physically on your map. Everything you would normally sell through an orbital beacon is traded face to face, which also means your traders actually have to walk out to the ship.
+
+[h2]Note about the comms console[/h2]
+
+By default the mod [b]still requires a comms console to be built[/b], so it does not change how early in the game you can get trade. If you would rather have ships arrive without one, turn off [b]"Require comms console"[/b] in mod settings.
+
+[hr][/hr]
+
+[h2]Requirements[/h2]
+
+[list]
+[*] [b]RimWorld 1.7[/b]
+[*] [b][url=https://steamcommunity.com/workshop/filedetails/?id=2009463077]Harmony[/url][/b] — required for the orbital-trader replacement patch
+[/list]
+
+No DLC is required. If you own Royalty, ships will also use your ship landing beacons as a fallback landing spot. If you own Odyssey, its gravship features are independent and have not been observed to conflict.
+
+[h2]How landing works[/h2]
+
+The mod adds its own [b]landing zone[/b] area. Open the [b]Zones[/b] architect category and use [b]"Expand landing zone"[/b] to paint tiles; [b]"Clear landing zone"[/b] removes them. Ships aim for the middle of a zone, so if you want several ships parked side by side, designate several separate zones rather than one huge one.
+
+If no landing zone is painted, ships fall back to Royalty ship landing beacons when available, and otherwise pick a clear spot themselves.
+
+[h2]Compatibility & save safety[/h2]
+
+[list]
+[*] Safe to add to an [b]existing save[/b].
+[*] Removing it mid-save is not recommended — any ship currently on the map will be lost, and the landing zone area will be dropped.
+[*] The orbital-trader replacement is optional and can be toggled off, so it will not fight with other mods that touch orbital traders.
+[/list]
+
+[h2]Credits[/h2]
+
+[list]
+[*] [b]AUTOMATIC1111[/b] — original mod: design, code, ship art.
+[*] [b]IoIqq[/b] — 1.7 / Waylith engine port.
+[/list]
+
+If you are the original author and would prefer this not exist, contact me and I will take it down.
+
+[hr][/hr]
+
+[h1]繁中 / 简中[/h1]
+
+[b]贸易飞船[/b]现在会降落到你的地图上，和你面对面交易——不需要轨道商船，也不需要贸易信标。
+
+这是 [b]AUTOMATIC1111[/b] 原作 [i]Trader ships[/i] 的 [b]1.7（Waylith 引擎）[/b] 续作。原始设计、美术与代码均为原作者成果，本次移植只为让它在引擎重写后能继续运行。
+
+[b]注意：默认仍然需要通讯台。[/b] 如果你希望不建通讯台也能来飞船，请在模组设置里关闭「需要通讯台」一项。
+
+[h2]功能[/h2]
+
+[list]
+[*] 飞船降落并开启交易，行为与来访商队类似。
+[*] 会[b]优先降落在你划定的着陆区[/b]。
+[*] 直接与飞船交易，不经过轨道商船界面。
+[*] 交易完成后可让飞船起飞离开。
+[*] 有概率[b]坠毁[/b]而非正常降落，散落残骸与幸存者。
+[*] 可在 [b]选项 → 模组设置[/b] 中调整，包括保留原版轨道商船。
+[/list]
+
+[h2]前置[/h2]
+
+[list]
+[*] 环世界 [b]1.7[/b]
+[*] [b]Harmony[/b]（用于替换轨道商船）
+[/list]
+
+不需要任何 DLC。
+
+[h2]存档[/h2]
+
+可以中途加入现有存档。不建议中途移除——地图上正在交易的飞船会消失，着陆区也会一并丢弃。
+
+[h2]致谢[/h2]
+
+[b]AUTOMATIC1111[/b]（原作）、[b]IoIqq[/b]（1.7 移植）。

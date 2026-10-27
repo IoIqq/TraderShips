@@ -47,6 +47,17 @@ namespace TraderShips
         {
             parts.SortBy(x => x.layer);
 
+            // Defensive: parts.Min/Max throw InvalidOperationException on an empty sequence.
+            // This can only realistically happen if a ShipgenDef's steps produced no parts
+            // (e.g. a mod overriding the ShipSpritePartDefs).
+            if (parts.Count == 0)
+            {
+                Log.Warning("[TraderShips] Generated ship sprite has no parts; using a default offset.");
+                offset.x = 0f;
+                offset.y = -40;
+                return;
+            }
+
             float minX = parts.Min(p => p.offset.x + p.distance * dxMultiplier - p.def.graphicData.drawSize.x / 2);
             float maxX = parts.Max(p => p.offset.x - p.distance * dxMultiplier + p.def.graphicData.drawSize.x / 2);
 
