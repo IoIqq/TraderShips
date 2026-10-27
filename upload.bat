@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
@@ -17,13 +17,19 @@ REM the shell happened to be (often C:\WINDOWS\system32), so relative paths
 REM break. Force the working directory to the script location.
 cd /d "%~dp0"
 
-set "STEAMCMD=H:\steamcmd\steamcmd.exe"
+REM ---------- locate steamcmd (prefer the logged-in instance) ----------
+if exist "H:\RimCrow\tools\steamcmd\steamcmd.exe" (
+    set "STEAMCMD=H:\RimCrow\tools\steamcmd\steamcmd.exe"
+    set "LOG=H:\RimCrow\tools\steamcmd\logs\workshop_log.txt"
+) else (
+    set "STEAMCMD=H:\steamcmd\steamcmd.exe"
+    set "LOG=H:\steamcmd\logs\workshop_log.txt"
+)
 set "PY=C:\Users\Adm\AppData\Roaming\dsh-desktop\harness\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe"
 set "REPO=E:\AI\mods\rimworld\TraderShips"
 set "VDF=%REPO%\workshop\workshopitem.vdf"
 set "MODDIR=H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev"
 set "DLL=%MODDIR%\1.7\Assemblies\TraderShips.dll"
-set "LOG=H:\steamcmd\logs\workshop_log.txt"
 
 REM ---------- account name: argument, or prompt when double-clicked ----------
 set "ACCOUNT=%~1"
@@ -38,18 +44,21 @@ echo ============================================================
 echo   Trader Ships - Steam Workshop Upload
 echo ============================================================
 echo.
-echo Enter your Steam account name ^(the login name, not the
-echo display name^). Leave blank to cancel.
+echo Enter your Steam account name ^(the login name, not display name^).
+echo Press Enter directly to use cached account: rb3481141298
 echo.
-set /p "ACCOUNT=Steam account: "
+set "INPUT_ACCOUNT="
+set /p "INPUT_ACCOUNT=Steam account [default: rb3481141298]: "
+if not defined INPUT_ACCOUNT set "INPUT_ACCOUNT=rb3481141298"
+set "ACCOUNT=!INPUT_ACCOUNT!"
 
 :have_account
 REM set /p assigns a single space when it receives an empty line, so the value
 REM can be "defined" and yet contain no real account name. Strip spaces before
 REM testing.
 set "ACCOUNT=!ACCOUNT: =!"
-if not defined ACCOUNT goto no_account
-if "!ACCOUNT!"=="" goto no_account
+if not defined ACCOUNT set "ACCOUNT=rb3481141298"
+if "!ACCOUNT!"=="" set "ACCOUNT=rb3481141298"
 goto account_ok
 
 :no_account

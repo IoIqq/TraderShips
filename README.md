@@ -1,5 +1,8 @@
 # Trader ships (continued)
 
+[![Steam Workshop](https://img.shields.io/badge/Steam-Workshop-1b2838?logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=3828162134)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github)](https://github.com/IoIqq/TraderShips)
+
 Adds trader spaceships to the game. Ships will visit your colony, preferring your landing zone, and trade with you just like visiting caravans — no trade beacon and no orbital trader screen needed.
 
 Trader ships are meant to replace orbital traders, but you can set both to be active in mod settings.
@@ -8,7 +11,7 @@ This is the **RimWorld 1.7 (Waylith engine)** continuation of [AUTOMATIC1111's o
 
 ## Installation
 
-1. Subscribe on the Steam Workshop, or clone this repo.
+1. Subscribe on the [Steam Workshop (ID: 3828162134)](https://steamcommunity.com/sharedfiles/filedetails/?id=3828162134), or clone this repo.
 2. Make sure **Harmony** is installed and loaded before this mod.
 3. Enable *Trader ships (continued)* and restart.
 
