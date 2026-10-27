@@ -30,19 +30,33 @@ function Fail($msg) {
     exit 1
 }
 
-Write-Host '[1/5] Checking steamcmd...'
+Write-Host '[1/6] Running full pre-flight check...'
+$python = 'C:\Users\Adm\AppData\Roaming\dsh-desktop\harness\dsh-runtimes\dsh-primary-runtime\dependencies\python\python.exe'
+$preflight = 'E:\AI\mods\TraderShips\tools\preflight.py'
+if ((Test-Path $python) -and (Test-Path $preflight)) {
+    & $python $preflight
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ''
+        Fail 'pre-flight check failed - fix the FAIL lines above before uploading.'
+    }
+} else {
+    Write-Host '  SKIP: python or preflight.py not found' -ForegroundColor Yellow
+}
+
+Write-Host ''
+Write-Host '[2/6] Checking steamcmd...'
 if (-not (Test-Path $SteamCmd)) { Fail "steamcmd not found at $SteamCmd" }
 Write-Host "  OK: $SteamCmd" -ForegroundColor Green
 
-Write-Host '[2/5] Checking VDF...'
+Write-Host '[3/6] Checking VDF...'
 if (-not (Test-Path $Vdf)) { Fail "VDF not found at $Vdf`n  Run: python E:\AI\mods\TraderShips\tools\make-vdf.py" }
 Write-Host "  OK: $Vdf" -ForegroundColor Green
 
-Write-Host '[3/5] Checking mod DLL...'
+Write-Host '[4/6] Checking mod DLL...'
 if (-not (Test-Path $Dll)) { Fail "DLL not found at $Dll`n  Build and deploy first." }
 Write-Host "  OK: $Dll" -ForegroundColor Green
 
-Write-Host '[4/5] Scanning for GUID cache DLLs...'
+Write-Host '[5/6] Scanning for GUID cache DLLs...'
 $asmDir = Join-Path $ModDir '1.7\Assemblies'
 $cache = @(Get-ChildItem -Path $asmDir -Filter 'GUID_*.dll' -ErrorAction SilentlyContinue)
 $allDll = @(Get-ChildItem -Path $asmDir -Filter '*.dll' -ErrorAction SilentlyContinue)
@@ -55,7 +69,7 @@ if ($cache.Count -gt 0) {
 Write-Host "  OK: $($allDll.Count) DLL(s), no GUID cache" -ForegroundColor Green
 $allDll | ForEach-Object { Write-Host "      $($_.Name)" }
 
-Write-Host '[5/5] Uploading...'
+Write-Host '[6/6] Uploading...'
 Write-Host ''
 & $SteamCmd +login $Account +workshop_build_item $Vdf +quit
 $rc = $LASTEXITCODE
