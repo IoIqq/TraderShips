@@ -6,52 +6,63 @@
 - 部署目录：`H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev`（已就绪，93 个文件）
 - VDF：`E:\AI\mods\TraderShips\workshop\workshopitem.vdf`（已生成并校验）
 
-## 一、登录 steamcmd
+## 一、一条命令搞定（推荐）
 
-```bat
-H:\steamcmd\steamcmd.exe +login <你的Steam账号>
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File E:\AI\mods\TraderShips\tools\upload-workshop.ps1 -Account <你的账号>
 ```
 
-进去后按提示输入密码，有 Steam Guard 会要求验证码。登录成功后再执行 `quit`。
+脚本会依次检查：steamcmd 存在 → VDF 存在 → DLL 存在 → **无 GUID 缓存 DLL**，全部通过才调用上传。密码由 steamcmd 自己交互询问，脚本不接触。
 
-登录态保存在 `H:\steamcmd\config\config.vdf`，之后不用重复登录。
+> 别用 `.bat` 版本：本机 `cmd.exe` 解析含中文的路径会崩（会把 `setlocal` 拆成 `bledelayedexpansion`），
+> 所以改用 PowerShell。这个坑是实测踩到的。
 
-## 二、上传
+## 二、手动方式
 
-**首次上传**（创建新条目，VDF 里 `publishedfileid` 必须是 `0`）：
+**登录**（可选，登录态会保存在 `H:\steamcmd\config\config.vdf`）
 
 ```bat
-H:\steamcmd\steamcmd.exe +login <账号> +workshop_build_item "E:\AI\mods\TraderShips\workshop\workshopitem.vdf" +quit
+H:\steamcmd\steamcmd.exe +login 你的账号
 ```
 
-成功后会打印新条目的 `PublishedFileId`。
+**上传**
 
-**后续更新**（改已有条目）：
+```bat
+H:\steamcmd\steamcmd.exe +login 你的账号 +workshop_build_item "E:\AI\mods\TraderShips\workshop\workshopitem.vdf" +quit
+```
 
-1. 把 ID 写进 VDF：
+## 三、后续更新
+
+**首次上传**：VDF 里 `publishedfileid` 必须是 `0`（现在就是）。上传成功后 Steam 分配新 ID。
+
+**更新已有条目**：把 ID 写进 VDF，再重跑上传。
 
 ```bat
 python E:\AI\mods\TraderShips\tools\make-vdf.py 3820000000
 ```
 
-2. 重跑同一条上传命令
+> ⚠️ `steamcmd` **不会自动生成 `PublishedFileId.txt`**，只有该文件已存在时才复用其中的 ID。
+> 首次上传后必须手动创建，否则下次上传会**再新建一个条目**，工坊出现重复模组。
 
-## 三、上传后要做的事
+## 四、上传后必做
 
-拿到 PublishedFileId 后，把它告诉我，或者自己执行：
+从日志里取 ID（`H:\steamcmd\logs\workshop_log.txt`，找 `Upload finished for workshop item <ID>`）：
 
-```bat
-echo 3820000000 > "H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev\About\PublishedFileId.txt"
+```powershell
+Select-String -Path 'H:\steamcmd\logs\workshop_log.txt' -Pattern 'Upload finished for workshop item (\d+)' | Select-Object -Last 1
 ```
 
-同时把源仓库里也建一份（下次部署会带上）：
+然后**两个位置都要写**：
 
-```bat
-echo 3820000000 > "E:\AI\mods\TraderShips\About\PublishedFileId.txt"
+```powershell
+'3820000000' | Out-File -Encoding ascii -NoNewline "H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev\About\PublishedFileId.txt"
+'3820000000' | Out-File -Encoding ascii -NoNewline "E:\AI\mods\TraderShips\About\PublishedFileId.txt"
 ```
 
-> 注意：`deploy-1.7.ps1` 已改成「源仓库没有 PublishedFileId.txt 就删掉目标里的」。
-> 所以源仓库那份必须存在，否则每次部署都会把游戏目录里的清掉。
+> `deploy-1.7.ps1` 的行为是「源仓库没有 `PublishedFileId.txt` 就删掉目标里的」。
+> 所以**源仓库那份必须存在**，否则每次部署都会把游戏目录里的清掉。
+
+拿到 ID 后告诉我，我会补上 GitHub README 的工坊徽章和 About.xml 里的工坊链接。
 
 ## 四、检查清单
 
@@ -77,17 +88,32 @@ echo 3820000000 > "E:\AI\mods\TraderShips\About\PublishedFileId.txt"
 
 ## 六、更新流程备忘
 
-改代码后：
+改代码后（**先完全退出游戏**，否则 `CS2012` 写不进 DLL）：
 
 ```bash
 cd E:\AI\mods\TraderShips\Source
-dotnet build TraderShips17.csproj -c Release
+DOTNET_CLI_HOME=/e/AI/tools/dotnet-home TMP=/e/AI/tools/tmp TEMP='E:\AI\tools\tmp' \
+  "/e/AI/tools/dotnet10/dotnet.exe" build TraderShips17.csproj -c Release
 ```
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File E:\AI\mods\TraderShips\tools\deploy-1.7.ps1
 ```
 
-然后重新上传（必须带 publishedfileid，否则会再建一个新条目）。
+然后重新上传（**必须带 publishedfileid**，否则会再建一个条目）。
 
-记得同步改 `About/About-1.7.xml` 里的 `<modVersion>` 和 VDF 里的 `changenote`。
+记得同步改 `About/About-1.7.xml` 的 `<modVersion>`、VDF 的 `changenote`，以及 `tools/make-vdf.py` 里的 `CHANGENOTE` 常量。
+
+## 七、与原发布指南的差异
+
+`Mods\README_RimWorld模组发布指南.md` 里部分环境信息已过时，以本节为准：
+
+| 项目 | 指南写的 | 实际 |
+| --- | --- | --- |
+| 游戏版本 | 1.7.4985 rev1269 | **1.7.4990 rev1069** |
+| .NET 运行时 | 10.0.7 | **10.0.13-waylithclr.dev** |
+| .NET SDK | 仅 9.0.306，无 net10 | **已装 10.0.403**（`E:\AI\tools\dotnet10`） |
+| steamcmd | `H:\RimCrow\tools\steamcmd\` | **`H:\steamcmd\`**（两处都有副本，内容相同） |
+| 编译方式 | 绕过 MSBuild 直接调 csc.dll | **直接用 net10 SDK**，`TraderShips17.csproj` 正常构建 |
+
+指南第 4.4 节「GUID 缓存 DLL」和第 4.5 节「PublishedFileId.txt 不会自动生成」这两条**仍然有效且非常关键**，已纳入脚本检查。
