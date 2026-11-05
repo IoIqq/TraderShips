@@ -1,4 +1,4 @@
-﻿using LudeonTK;
+using LudeonTK;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -15,16 +15,24 @@ namespace TraderShips
         static public Matrix4x4 drawingMatrix = default(Matrix4x4);
 
         [TweakValue("Gameplay", -3f, 3f)]
-        static float dxMultiplier = -1f;
+        internal static float dxMultiplier = -1f;
 
         [TweakValue("Gameplay", -3f, 3f)]
-        static float dzMultiplier = 0.8f;
+        internal static float dzMultiplier = 0.8f;
 
 
         public List<ShipSpritePart> parts = new List<ShipSpritePart>();
         public float scale = 0.015f;
         public Vector2 offset;
         public Color color = Color.white;
+
+        // Baked single-texture representation. Not scribed: it is rebuilt lazily from parts, and
+        // keeping it out of the save avoids storing a raw texture blob per ship.
+        private Texture2D bakedTexture;
+        private Vector2 bakedSize;
+        private Vector2 bakedCenter;
+        private bool bakeAttempted;
+        private bool bakeFailed;
 
         public void ExposeData()
         {
@@ -74,6 +82,10 @@ namespace TraderShips
 
         public void Draw(Vector3 drawPos, float additionalAngle = 0)
         {
+            // One quad instead of one draw call per part. Falls back to the per-part loop if
+            // baking is disabled in settings or failed for this sprite.
+            if (TryDrawBaked(drawPos, additionalAngle)) return;
+
             int i = 0;
             foreach (ShipSpritePart part in parts)
             {
@@ -102,6 +114,51 @@ namespace TraderShips
 
                 i++;
             }
+        }
+
+        /// <summary>
+        /// Draws the cached baked texture as a single quad. Returns false when the caller should
+        /// fall back to per-part drawing.
+        /// </summary>
+        private bool TryDrawBaked(Vector3 drawPos, float additionalAngle)
+        {
+            if (bakeFailed) return false;
+
+            TraderShipsSettings settings = TraderShips.settings;
+            if (settings != null && !settings.bakeShipGraphics) return false;
+
+            if (!bakeAttempted)
+            {
+                bakeAttempted = true;
+                ShipSpriteBaker.Baked baked = ShipSpriteBaker.TryBake(this);
+                if (baked == null || baked.texture == null)
+                {
+                    bakeFailed = true;
+                    return false;
+                }
+
+                bakedTexture = baked.texture;
+                bakedSize = baked.size;
+                bakedCenter = baked.center;
+            }
+
+            if (bakedTexture == null) return false;
+
+            Material mat = MaterialPool.MatFrom(bakedTexture, ShaderTypeDefOf.CutoutComplex.Shader,
+                Color.white, 0);
+
+            Vector3 pos = drawPos;
+            pos.x += bakedCenter.x * scale;
+            pos.y = drawPos.y + 0.1f;
+            pos.z -= bakedCenter.y * scale;
+
+            Vector3 size = new Vector3(scale * bakedSize.x, 1f, scale * bakedSize.y);
+            Quaternion rot = Quaternion.LookRotation(Vector3.forward) * Quaternion.Euler(Vector3.up * additionalAngle);
+
+            drawingMatrix.SetTRS(pos, rot, size);
+            Graphics.DrawMesh(MeshPool.plane10, drawingMatrix, mat, 0);
+
+            return true;
         }
     }
 }

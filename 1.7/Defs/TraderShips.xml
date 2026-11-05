@@ -23,6 +23,8 @@
     <defName>TraderShipsShip</defName>
     <description>A trader ship.</description>
     <label>trader ship</label>
+    <!-- Building_Ship 覆盖 Thing.Graphic，按实例返回运行时烘焙的随机拼装贴图 -->
+    <thingClass>TraderShips.Building_Ship</thingClass>
 
     <graphicData>
       <texPath>TraderShips/empty</texPath>

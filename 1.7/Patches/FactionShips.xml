@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+  <!--
+    给派系打「能派遣哪些贸易飞船」的标签。
+
+    注意格式：PatchOperationAddModExtension 的 <value> 是一个 XmlContainer，
+    里面必须放 <li Class="..."/> 节点，不能把 Class 写在 <value> 上
+    （那样会抛 InvalidCastException: Unable to cast ... to 'Verse.XmlContainer'）。
+
+    分档规则（没打标签的派系走代码里的 FactionShipGenerator / 科技阶段兜底）：
+      Neolithic / Animal             → 没有贸易飞船
+      Medieval 及以上                → 自动生成派系专属飞船（卖该派系模组的物品）
+  -->
+
+  <!--
+    帝国：只派自己的帝国商船。
+
+    注意这里分成两步：
+      PatchOperationAddModExtension 只能往「已存在的」<modExtensions> 里追加，
+      而原版 Empire 的 FactionDef 根本没有这个节点，直接 AddModExtension 会失败
+      （日志里就是那条 "PatchOperationAddModExtension(...Empire) failed"）。
+    所以先确保节点存在，再挂扩展。
+  -->
+  <Operation Class="PatchOperationAdd" MayRequire="Ludeon.RimWorld.Royalty">
+    <xpath>Defs/FactionDef[defName="Empire" and not(modExtensions)]</xpath>
+    <value>
+      <modExtensions />
+    </value>
+  </Operation>
+
+  <Operation Class="PatchOperationAddModExtension" MayRequire="Ludeon.RimWorld.Royalty">
+    <xpath>Defs/FactionDef[defName="Empire"]</xpath>
+    <value>
+      <li Class="TraderShips.FactionShipExtension">
+        <shipKinds>
+          <li>Orbital_Empire</li>
+        </shipKinds>
+      </li>
+    </value>
+  </Operation>
+
+  <!-- 部落：新石器时代，没有贸易飞船 -->
+  <Operation Class="PatchOperationAddModExtension">
+    <xpath>Defs/FactionDef[defName="TribeCivil"]</xpath>
+    <value>
+      <li Class="TraderShips.FactionShipExtension">
+        <noTradeShips>true</noTradeShips>
+      </li>
+    </value>
+  </Operation>
+  <Operation Class="PatchOperationAddModExtension">
+    <xpath>Defs/FactionDef[defName="TribeRough"]</xpath>
+    <value>
+      <li Class="TraderShips.FactionShipExtension">
+        <noTradeShips>true</noTradeShips>
+      </li>
+    </value>
+  </Operation>
+  <Operation Class="PatchOperationAddModExtension">
+    <xpath>Defs/FactionDef[defName="TribeSavage"]</xpath>
+    <value>
+      <li Class="TraderShips.FactionShipExtension">
+        <noTradeShips>true</noTradeShips>
+      </li>
+    </value>
+  </Operation>
+
+  <!-- 海盗：只做走私生意 -->
+  <Operation Class="PatchOperationAddModExtension">
+    <xpath>Defs/FactionDef[defName="Pirate"]</xpath>
+    <value>
+      <li Class="TraderShips.FactionShipExtension">
+        <shipKinds>
+          <li>Orbital_PirateMerchant</li>
+        </shipKinds>
+      </li>
+    </value>
+  </Operation>
+
+</Patch>

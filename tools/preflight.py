@@ -1,4 +1,4 @@
-﻿"""Full pre-flight check for the Trader Ships workshop upload.
+"""Full pre-flight check for the Trader Ships workshop upload.
 
 Runs the checklist from the local RimWorld publishing guide (section 9) so we
 do not discover a problem after the item is already public.
@@ -48,8 +48,14 @@ if root is not None:
     versions = [(li.text or "").strip() for li in root.findall("supportedVersions/li")]
     check("1.7" in versions, f"supportedVersions includes 1.7 ({versions})", f"supportedVersions lacks 1.7: {versions}")
 
+    # 1.7.3 onwards Harmony is OPTIONAL on purpose: replacing vanilla orbital traders is done by
+    # swapping IncidentDef.workerClass in 1.7/Patches/OrbitalTrader.xml, so the core mod ships with
+    # no dependencies. Harmony is only used reflectively for the extra comms-console option.
+    # Guard the invariant instead: Harmony must NOT be a hard dependency again by accident.
     deps = [(li.findtext("packageId") or "").strip() for li in root.findall("modDependencies/li")]
-    check("brrainz.harmony" in deps, "modDependencies includes brrainz.harmony", f"modDependencies missing harmony: {deps}")
+    check("brrainz.harmony" not in deps,
+          "modDependencies does not hard-require harmony (optional by design)",
+          f"harmony crept back into modDependencies: {deps}")
 
     after = [(li.text or "").strip() for li in root.findall("loadAfter/li")]
     check("brrainz.harmony" in after, "loadAfter includes brrainz.harmony", f"loadAfter missing harmony: {after}")

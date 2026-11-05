@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+  <TraderShipsDispatchTower.label>trade terminal</TraderShipsDispatchTower.label>
+  <TraderShipsDispatchTower.description>A terminal for calling and buying trade ships. Does the same job as a comms console, but trade only.</TraderShipsDispatchTower.description>
+
+</LanguageData>

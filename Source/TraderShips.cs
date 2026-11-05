@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using RimWorld;
 using UnityEngine;
@@ -17,11 +17,14 @@ namespace TraderShips
             ApplyHarmonyPatches();
         }
 
-        // Harmony is an *optional* runtime dependency: it is only present when the player has the
-        // Harmony mod enabled. Referencing HarmonyLib.Harmony directly in this constructor throws
-        // TypeLoadException inside CreateModClasses, and RimWorld then treats the whole load as
-        // failed and resets ModsConfig. So resolve everything reflectively and degrade gracefully:
-        // without Harmony we leave vanilla orbital traders alone, and the rest of the mod still works.
+        // Harmony is an *optional* runtime dependency, used only for the comms-console
+        // "request trade ship" option (it patches the static FactionDialogMaker.FactionDialogFor,
+        // which XML cannot reach). Everything else — ships arriving, replacing orbital traders,
+        // trading, landing zones — works with no dependencies at all.
+        //
+        // Referencing HarmonyLib.Harmony directly in this constructor would throw TypeLoadException
+        // inside CreateModClasses when Harmony is absent; RimWorld then treats the whole load as
+        // failed and resets ModsConfig. So everything is resolved reflectively and degrades gracefully.
         private void ApplyHarmonyPatches()
         {
             try
@@ -52,11 +55,17 @@ namespace TraderShips
                     return;
                 }
 
-                PatchTarget(patchMethod, harmonyMethodType, harmony,
-                    "CanFireNowSub", "CanFireNowSub_Prefix");
+                // NOTE: the orbital-trader interception no longer uses Harmony. It is done by
+                // swapping IncidentDef.workerClass in 1.7/Patches/OrbitalTrader.xml, which points
+                // at IncidentWorkerTraderShipArrival. That keeps the core mod (ships arrive and
+                // trade) working with zero dependencies; Harmony is only needed for the extra
+                // comms-console option below, which patches a static method and cannot be
+                // replaced through XML.
 
-                PatchTarget(patchMethod, harmonyMethodType, harmony,
-                    "TryExecuteWorker", "TryExecuteWorker_Prefix");
+                // Comms console: add a standalone "Request trade ship" option to the faction
+                // dialog. FactionDialogMaker.FactionDialogFor is public static and returns the
+                // root DiaNode, so a postfix can append to it without touching vanilla options.
+                PatchFactionDialogFor(patchMethod, harmonyMethodType, harmony);
             }
             catch (Exception e)
             {
@@ -101,53 +110,61 @@ namespace TraderShips
             return best;
         }
 
-        private static void PatchTarget(
-            MethodInfo patchMethod, Type harmonyMethodType, object harmonyInstance,
-            string originalName, string prefixName)
+
+        /// <summary>
+        /// Postfix FactionDialogMaker.FactionDialogFor(Map, Faction, Pawn).
+        /// Done reflectively for the same reason as the orbital patches: no HarmonyLib reference.
+        /// </summary>
+        private static void PatchFactionDialogFor(MethodInfo patchMethod, Type harmonyMethodType, object harmonyInstance)
         {
-            MethodInfo original = typeof(IncidentWorker_OrbitalTraderArrival).GetMethod(
-                originalName,
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            // Vanilla signature (FactionDialogMaker.cs:16) is
+            //   public static DiaNode FactionDialogFor(Pawn negotiator, Faction faction)
+            // — two parameters, no Map. Getting this wrong makes GetMethod return null and the
+            // whole comms option silently disappears.
+            MethodInfo original = typeof(FactionDialogMaker).GetMethod(
+                "FactionDialogFor",
+                BindingFlags.Public | BindingFlags.Static,
+                null,
+                new Type[] { typeof(Pawn), typeof(Faction) },
+                null);
 
             if (original == null)
             {
-                Log.Warning($"[TraderShips] IncidentWorker_OrbitalTraderArrival.{originalName} not found; skipping.");
+                Log.Warning("[TraderShips] FactionDialogMaker.FactionDialogFor not found; comms ship request unavailable.");
                 return;
             }
 
-            MethodInfo prefix = typeof(global::TraderShips.Patch.OrbitalTraderPatches).GetMethod(
-                prefixName,
+            MethodInfo postfix = typeof(CommsShipRequestPatches).GetMethod(
+                "FactionDialogFor_Postfix",
                 BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-            if (prefix == null)
+            if (postfix == null)
             {
-                Log.Warning($"[TraderShips] prefix {prefixName} not found; skipping.");
+                Log.Warning("[TraderShips] CommsShipRequestPatches.FactionDialogFor_Postfix not found.");
                 return;
             }
 
-            object harmonyPrefix;
+            object harmonyPostfix;
             try
             {
-                harmonyPrefix = Activator.CreateInstance(harmonyMethodType, prefix);
+                harmonyPostfix = Activator.CreateInstance(harmonyMethodType, postfix);
             }
             catch (MissingMethodException)
             {
-                // Some versions only expose HarmonyMethod(MethodInfo) via a static factory.
                 MethodInfo ctor = harmonyMethodType.GetMethod("FromMethod", BindingFlags.Public | BindingFlags.Static);
                 if (ctor == null)
                 {
-                    Log.Warning("[TraderShips] Cannot construct HarmonyMethod; skipping patch.");
+                    Log.Warning("[TraderShips] Cannot construct HarmonyMethod for FactionDialogFor.");
                     return;
                 }
-
-                harmonyPrefix = ctor.Invoke(null, new object[] { prefix });
+                harmonyPostfix = ctor.Invoke(null, new object[] { postfix });
             }
 
             ParameterInfo[] ps = patchMethod.GetParameters();
             object[] args = new object[ps.Length];
             args[0] = original;
-            args[1] = harmonyPrefix;
-            args[2] = null;
+            args[1] = null;
+            args[2] = harmonyPostfix;
             for (int i = 3; i < args.Length; i++)
             {
                 args[i] = ps[i].ParameterType.IsValueType
@@ -161,7 +178,7 @@ namespace TraderShips
             }
             catch (TargetInvocationException tie)
             {
-                Log.Warning($"[TraderShips] Patch of {originalName} failed: "
+                Log.Warning("[TraderShips] Patch of FactionDialogFor failed: "
                     + (tie.InnerException ?? tie).Message);
             }
         }

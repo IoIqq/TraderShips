@@ -1,4 +1,4 @@
-﻿using RimWorld;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +15,41 @@ namespace TraderShips
             return map.listerBuildings.allBuildingsColonist.Any((Building b) => b.def.IsCommsConsole && (b.GetComp<CompPowerTrader>() == null || b.GetComp<CompPowerTrader>().PowerOn));
         }
 
+        /// <summary>
+        /// Tick of the last ship that actually arrived. Used only for the optional pacing setting;
+        /// deliberately not persisted, so loading a save resets the window rather than inheriting a
+        /// stale timestamp from whenever the player last quit.
+        /// </summary>
+        internal static int LastArrivalTick = -999999;
+
+        /// <summary>
+        /// Spawned ships currently parked on this map.
+        /// Unlike vanilla orbital traders, landed ships occupy real map space and all aim for the
+        /// same landing zone, so an unbounded number of them pile up. Vanilla caps orbital traders
+        /// at 5 (IncidentWorker_OrbitalTraderArrival.MaxShips); this is the equivalent guard.
+        /// </summary>
+        public static int CountLandedShips(Map map)
+        {
+            if (map == null || Globals.TraderShipsShip == null) return 0;
+            return map.listerThings.ThingsOfDef(Globals.TraderShipsShip).Count;
+        }
+
         public bool IsAllowed(IncidentParms parms)
         {
             if (TraderShips.settings.requireCommsConsole && !HaveConsole((Map)parms.target)) return false;
+
+            Map targetMap = (Map)parms.target;
+            int maxShips = TraderShips.settings.maxLandedShips;
+            if (maxShips > 0 && CountLandedShips(targetMap) >= maxShips) return false;
+
+            // Optional pacing: keep random arrivals at least N days apart. 0 disables the check
+            // and leaves the vanilla storyteller cadence untouched.
+            float minDays = TraderShips.settings.shipArrivalIntervalDays;
+            if (minDays > 0f)
+            {
+                int minTicks = UnityEngine.Mathf.RoundToInt(minDays * 60000f);
+                if (Find.TickManager.TicksGame - LastArrivalTick < minTicks) return false;
+            }
 
             return true;
         }
@@ -77,14 +109,21 @@ namespace TraderShips
                 }
             }
         }
-        public static Thing MakeTraderShip(Map map)
+        public static Thing MakeTraderShip(Map map, Faction forcedFaction = null, TraderKindDef forcedKind = null)
         {
             Thing ship = ThingMaker.MakeThing(Globals.TraderShipsShip, null);
-            TraderKindDef traderKindDef = (from x in DefDatabase<TraderKindDef>.AllDefs where CanSpawn(map, x) select x).RandomElementByWeightWithFallback((TraderKindDef traderDef) => traderDef.CalculatedCommonality);
+
+            // 玩家在通讯台里选了船型时要用那个，不能随机 —— 否则选"绮罗族贸易飞船"
+            // 来的却是别家的货（之前就是这样，绮罗族的船卖哥布林武器）。
+            TraderKindDef traderKindDef = forcedKind;
+            if (traderKindDef == null)
+            {
+                traderKindDef = (from x in DefDatabase<TraderKindDef>.AllDefs where CanSpawn(map, x) select x).RandomElementByWeightWithFallback((TraderKindDef traderDef) => traderDef.CalculatedCommonality);
+            }
             if (traderKindDef == null) throw new InvalidOperationException();
 
             CompShip comp = ship.TryGetComp<CompShip>();
-            comp.GenerateInternalTradeShip(map, traderKindDef);
+            comp.GenerateInternalTradeShip(map, traderKindDef, forcedFaction);
             return ship;
         }
 
@@ -113,17 +152,26 @@ namespace TraderShips
             GenPlace.TryPlaceThing(SkyfallerMaker.MakeSkyfaller(comp.Props.landAnimation, ship), center, map, ThingPlaceMode.Near);
         }
 
-        public bool TryExecuteWorkerPub(IncidentParms parms)
+        /// <summary>通讯台里玩家选定的船型；只在一次 TryExecuteWorkerPub 内有效。</summary>
+        private TraderKindDef forcedKindForNextCall;
+
+        public bool TryExecuteWorkerPub(IncidentParms parms, TraderKindDef forcedKind = null)
         {
+            forcedKindForNextCall = forcedKind;
             return TryExecuteWorker(parms);
         }
 
         protected override bool TryExecuteWorker(IncidentParms parms)
         {
             Map map = (Map)parms.target;
-            Thing ship = MakeTraderShip(map);
+            // 呼叫飞船时 parms.faction 是玩家指定的派系；用它兜底，保证叫来的船确实属于该派系。
+            Thing ship = MakeTraderShip(map, parms.faction, forcedKindForNextCall);
 
             LandShip(map, ship);
+
+            // Restart the pacing window. Paid comms requests also go through here, which is
+            // intentional: chartering a ship should also stop a free one from arriving right after.
+            LastArrivalTick = Find.TickManager.TicksGame;
 
             return true;
         }

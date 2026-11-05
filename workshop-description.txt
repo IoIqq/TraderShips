@@ -1,112 +1,221 @@
+[h1]贸易飞船（续） / Trader Ships (Continued)[/h1]
+
+飞船会降落到你的地图上，和你当面交易——不需要轨道商船，也不需要贸易信标。
+
+这是 [b]AUTOMATIC1111[/b] 原作 [i]Trader ships[/i] 的 [b]1.7[/b] 续作，由 IoIqq 移植并扩展。
+
+[hr][/hr]
+
+[h1]这一版新增[/h1]
+
+[h2]贸易台[/h2]
+独立的 3×2 供电建筑，与通讯台同科技、造价更低。小人右键即可呼叫或购买飞船，不必再绕通讯台。
+
+[h2]派系专属船队[/h2]
+每个派系会按自己的物品库自动生成 [b]9 类主题商船[/b]：
+
+[list]
+[*][b]医疗船[/b] —— 药品与医疗物资
+[*][b]武器船[/b] —— 武器、弹药，夹带医疗品
+[*][b]服装船[/b] —— 衣物、护甲、头盔
+[*][b]食品船[/b] —— 成品餐与饮品
+[*][b]物资船[/b] —— 金属、皮革、布料、矿产
+[*][b]工业船[/b] —— 零件、燃料、化工
+[*][b]家具船[/b] —— 能搬走的家具与建材
+[*][b]珍宝船[/b] —— 神器、遗物、超科技小件
+[*][b]杂货船[/b] —— 什么都有一点
+[/list]
+
+外加两种卖人的船：
+
+[list]
+[*][b]人才船[/b] —— 4~8 人，技能 14~20 且带热情，[b]买回来直接是殖民者[/b]
+[*][b]奴隶船[/b] —— 10~18 人，便宜量大，买回来是奴隶
+[/list]
+
+[h2]船型与货单[/h2]
+货单按主题从[b]原版分类与交易标签[/b]里挑选：普通船约 40 种、食品与杂货船约 80 种，不会出现一堆同名变体。
+
+医疗船真的只卖药，武器船不会夹带粮食。任何船都会收购自己经营的那类物品，交易窗口的「会购买的物品」会列出完整分类。
+
+[h2]包船与买船[/h2]
+付银呼叫指定船型，好感越高越便宜（好感 +100 时 6 折）。也可以向派系直接[b]买下一艘属于自己的穿梭机[/b]，价格随好感浮动。
+
+[h2]飞船会被打[/h2]
+血量掉到 60% 以下，船长会要求赔偿。三种结果：
+
+[list]
+[*]付钱了事
+[*]拒绝 —— 扣好感，并发信件通知你具体掉了多少
+[*]拒绝并承担后果 —— 该派系转为敌对
+[/list]
+
+直接击毁飞船，[b]整船货物会散落一地[/b]，派系立刻与你为敌。
+
+[quote]只有[b]你自己的殖民者或炮塔[/b]打伤飞船，船长才会找你赔钱。火灾、雷击、别的派系交火不算在你头上。[/quote]
+
+[h2]偷渡客[/h2]
+飞船有几率带下一个[b]无阵营[/b]的人，在殖民地附近徘徊。收留就编入殖民地，拒绝则自行离开。
+
+[hr][/hr]
+
+[h1]用法[/h1]
+
+[list]
+[*]研究微电子学，在建筑菜单找到[b]贸易台[/b]（3×2，钢 80 + 零件 2，需要通电）
+[*]小人右键贸易台，选[b]Trade[/b]
+[*]左侧选派系，右侧选船型，点[b]呼叫[/b]
+[*]飞船降落后，小人走到船边交易
+[/list]
+
+[h1]着陆区怎么画[/h1]
+
+区域分类里有两个工具：「[b]扩展着陆区[/b]」「[b]清除着陆区[/b]」。
+
+飞船瞄准[b]整片区域的中心[/b]降落——想让好几艘船并排停靠，请划[b]几块互不相连的小区域[/b]，而不是一整块大区域。
+
+[h1]前置[/h1]
+
+[list]
+[*]环世界 [b]1.7[/b]（同时保留 1.1~1.6 的旧版本文件夹）
+[*][b]Harmony[/b] —— [u]可选[/u]
+[/list]
+
+不装 Harmony 会怎样？飞船照常来、照常交易，核心功能不受影响。只有一件事失效：通讯台不会多出「贸易台……」子菜单——用独立的贸易台建筑即可，其余完全一致。
+
+不需要任何 DLC。拥有 Royalty 时飞船还会使用降落信标作为备选落点。
+
+[h1]兼容性[/h1]
+
+[list]
+[*]适用版本：1.7（同时声明 1.1~1.6）
+[*]会新增 Def（贸易台、自动生成的船型），不改动原版 Def 的数值
+[*]可以中途加入现有存档
+[*][b]不建议中途移除[/b]——地图上正在交易的飞船会消失，着陆区也会一并丢弃
+[*]若装了重度改动交易界面的模组，船型列表可能错位
+[/list]
+
+[h1]所以为什么值得装[/h1]
+
+原版的轨道商船只能隔着通讯台买卖。这个模组让飞船[b]真的落到你的地图上[/b]，你得派小人走过去，货是真放在船上的，船被打会掉货、会翻脸、会赔钱——交易第一次有了物理存在。
+
+[h1]致谢[/h1]
+
+[list]
+[*][b]AUTOMATIC1111[/b] —— 原作：设计、代码、飞船美术
+[*][b]IoIqq[/b] —— 1.7 移植与后续扩展
+[/list]
+
+如果你是原作者且不希望这个续作存在，请联系我，我会下架。
+
+[hr][/hr]
+
 [h1]Trader Ships (Continued)[/h1]
 
-[b]Trader spaceships now land on your map and trade with you directly[/b] — no orbital trader, no trade beacon needed.
+Trade ships land on your map and do business with you face to face - no orbital trader, no trade beacon.
 
-This is the [b]RimWorld 1.7 (Waylith engine)[/b] continuation of [b]AUTOMATIC1111's[/b] original [i]Trader ships[/i] mod. All original design, art and code are his work; this continuation exists only to keep the mod playable on 1.7 after the engine rewrite.
-
-[hr][/hr]
-
-[h2]What it does[/h2]
-
-[list]
-[*]A trader ship flies in, lands on your map, and opens for business like a visiting caravan.
-[*]Ships [b]prefer your landing zone[/b] — designate one and they will aim for it.
-[*]Trade directly with the ship; no orbital trader screen involved.
-[*]Send the ship away when you are done with it.
-[*]Occasionally a ship [b]crashes[/b] instead of landing, scattering chunks and survivors.
-[*]Fully configurable in [b]Options → Mod settings[/b]: you can keep vanilla orbital traders around if you want both.
-[/list]
-
-[h2]Why no trade beacon?[/h2]
-
-Because the ship is physically on your map. Everything you would normally sell through an orbital beacon is traded face to face, which also means your traders actually have to walk out to the ship.
-
-[h2]Note about the comms console[/h2]
-
-By default the mod [b]still requires a comms console to be built[/b], so it does not change how early in the game you can get trade. If you would rather have ships arrive without one, turn off [b]"Require comms console"[/b] in mod settings.
+The RimWorld 1.7 continuation of AUTOMATIC1111's Trader ships, ported and extended by IoIqq.
 
 [hr][/hr]
 
-[h2]Requirements[/h2]
+[h1]New in this version[/h1]
+
+[h2]Trade Desk[/h2]
+A standalone powered 3x2 building with the same research as the comms console and a lower cost. Right-click it to call or buy ships without touching the console.
+
+[h2]Faction fleets[/h2]
+Every faction automatically gets up to [b]9 themed trade ships[/b] drawn from its own item pool:
 
 [list]
-[*][b]RimWorld 1.7[/b]
-[*][b][url=https://steamcommunity.com/workshop/filedetails/?id=2009463077]Harmony[/url][/b] — required for the orbital-trader replacement patch
+[*][b]Medical[/b] - medicine and medical supplies
+[*][b]Weapon[/b] - weapons and ammo, with some medicine
+[*][b]Apparel[/b] - clothing, armour, headgear
+[*][b]Food[/b] - prepared meals and drinks
+[*][b]Supply[/b] - metal, leather, textiles, minerals
+[*][b]Industrial[/b] - components, fuel, chemicals
+[*][b]Furniture[/b] - furniture and building materials
+[*][b]Relic[/b] - artifacts, relics, ultratech
+[*][b]General[/b] - a bit of everything
 [/list]
 
-No DLC is required. If you own Royalty, ships will also use your ship landing beacons as a fallback landing spot. If you own Odyssey, its gravship features are independent and have not been observed to conflict.
-
-[h2]How landing works[/h2]
-
-The mod adds its own [b]landing zone[/b] area. Open the [b]Zones[/b] architect category and use [b]"Expand landing zone"[/b] to paint tiles; [b]"Clear landing zone"[/b] removes them. Ships aim for the middle of a zone, so if you want several ships parked side by side, designate several separate zones rather than one huge one.
-
-If no landing zone is painted, ships fall back to Royalty ship landing beacons when available, and otherwise pick a clear spot themselves.
-
-[h2]Compatibility & save safety[/h2]
+Plus two ships that sell people:
 
 [list]
-[*]Safe to add to an [b]existing save[/b].
-[*]Removing it mid-save is not recommended — any ship currently on the map will be lost, and the landing zone area will be dropped.
-[*]The orbital-trader replacement is optional and can be toggled off, so it will not fight with other mods that touch orbital traders.
+[*][b]Talent[/b] - 4-8 people with skills 14-20 and a passion, who [b]join as colonists[/b]
+[*][b]Slave[/b] - 10-18 people, cheaper and in bulk, who arrive as slaves
 [/list]
 
-[h2]Source code[/h2]
+[h2]Stock[/h2]
+Stock is drawn from [b]vanilla categories and trade tags[/b] matching the theme: around 40 item kinds on a normal ship, around 80 on food and general ships, with no duplicate variants.
 
-The full source, the 1.7 porting notes and the issue tracker are on GitHub:
-[url=https://github.com/IoIqq/TraderShips]github.com/IoIqq/TraderShips[/url]
+Medical ships really only sell medicine; weapon ships carry no food. Every ship buys back the categories it deals in, and the "will buy" tab lists them in full.
 
-Bug reports and pull requests are welcome there. If you hit a rendering issue or a conflict with another mod, please include your log — it saves a lot of guessing.
+[h2]Charter and purchase[/h2]
+Pay silver to call a specific ship type - better goodwill means a lower fee (40% off at +100). You can also [b]buy a shuttle of your own[/b] from a faction, priced by goodwill.
 
-[h2]Credits[/h2]
+[h2]Ships can be attacked[/h2]
+Below 60% health the captain demands compensation. Three outcomes:
 
 [list]
-[*][b]AUTOMATIC1111[/b] — original mod: design, code, ship art.
-[*][b]IoIqq[/b] — 1.7 / Waylith engine port.
+[*]Pay up and it leaves
+[*]Refuse - goodwill drops, and a letter tells you exactly how much
+[*]Refuse and accept the consequences - the faction turns hostile
+[/list]
+
+Destroy the ship outright and [b]the entire cargo spills onto the ground[/b], while the faction becomes an enemy.
+
+[quote]The captain only demands compensation when [b]your own colonists or turrets[/b] did the damage. Fires, lightning and other factions' fights are not charged to you.[/quote]
+
+[h2]Stowaways[/h2]
+A ship may drop off a [b]factionless[/b] person who wanders near your colony. Take them in and they join; turn them away and they leave.
+
+[hr][/hr]
+
+[h1]How to use[/h1]
+
+[list]
+[*]Research Microelectronics, then find [b]Trade Desk[/b] in the architect menu (3x2, 80 steel + 2 components, needs power)
+[*]Right-click the desk with a colonist and pick [b]Trade[/b]
+[*]Pick a faction on the left, a ship type on the right, then hit [b]Call[/b]
+[*]Once it lands, walk a colonist over and trade
+[/list]
+
+[h1]Landing zones[/h1]
+
+Two tools live in the Zone category: [b]Expand landing zone[/b] and [b]Clear landing zone[/b].
+
+Ships aim for the [b]centre of the whole zone[/b] - if you want several ships parked side by side, paint [b]several separate small zones[/b] rather than one big one.
+
+[h1]Requirements[/h1]
+
+[list]
+[*]RimWorld [b]1.7[/b] (older 1.1-1.6 folders are still bundled)
+[*][b]Harmony[/b] - [u]optional[/u]
+[/list]
+
+What happens without Harmony? Ships still arrive and still trade; core functionality is unaffected. Only one thing is lost: the comms console no longer gains a "Trade desk..." submenu - use the standalone building instead and everything else is identical.
+
+No DLC required. With Royalty, ships will also use your ship landing beacons as a fallback landing spot.
+
+[h1]Compatibility[/h1]
+
+[list]
+[*]Version: 1.7 (1.1-1.6 also declared)
+[*]Adds new Defs (trade desk, generated ship types); does not rewrite vanilla Def values
+[*]Safe to add to an existing save
+[*][b]Removing it mid-save is not recommended[/b] - ships currently trading will be lost, and the landing zone is dropped too
+[*]Heavy UI mods that rework the trade dialog may cause the ship list to misalign
+[/list]
+
+[h1]Why bother[/h1]
+
+Vanilla orbital traders are a phone call and a menu. This mod makes ships [b]actually land on your map[/b]. You have to walk a pawn out to them, the cargo is physically on board, and a ship you damage will spill its goods, demand compensation, or turn on you. Trading finally has a physical presence.
+
+[h1]Credits[/h1]
+
+[list]
+[*][b]AUTOMATIC1111[/b] - original mod: design, code, ship art.
+[*][b]IoIqq[/b] - 1.7 port and the additions above.
 [/list]
 
 If you are the original author and would prefer this not exist, contact me and I will take it down.
-
-[hr][/hr]
-
-[h1]贸易飞船（续）/ Trader Ships (Continued)[/h1]
-
-[b]贸易飞船[/b]现在会降落到你的地图上，和你面对面交易——不需要轨道商船，也不需要贸易信标。
-
-这是 [b]AUTOMATIC1111[/b] 原作 [i]Trader ships[/i] 的 [b]1.7（Waylith 引擎）[/b] 续作。原始设计、美术与代码均为原作者成果，本次移植只为让它在引擎重写后能继续运行。
-
-[b]注意：默认仍然需要通讯台。[/b] 如果你希望不建通讯台也能来飞船，请在模组设置里关闭「需要通讯台」一项。
-
-[h2]功能[/h2]
-
-[list]
-[*]飞船降落并开启交易，行为与来访商队类似。
-[*]会[b]优先降落在你划定的着陆区[/b]。
-[*]直接与飞船交易，不经过轨道商船界面。
-[*]交易完成后可让飞船起飞离开。
-[*]有概率[b]坠毁[/b]而非正常降落，散落残骸与幸存者。
-[*]可在 [b]选项 → 模组设置[/b] 中调整，包括保留原版轨道商船。
-[/list]
-
-[h2]前置[/h2]
-
-[list]
-[*]环世界 [b]1.7[/b]
-[*][b]Harmony[/b]（用于替换轨道商船）
-[/list]
-
-不需要任何 DLC。
-
-[h2]存档[/h2]
-
-可以中途加入现有存档。不建议中途移除——地图上正在交易的飞船会消失，着陆区也会一并丢弃。
-
-[h2]源代码[/h2]
-
-完整源码、1.7 移植笔记和问题追踪都在 GitHub：
-[url=https://github.com/IoIqq/TraderShips]github.com/IoIqq/TraderShips[/url]
-
-欢迎在上面提 bug 或 PR。如果遇到渲染问题或与其他模组冲突，附上日志会省很多事。
-
-[h2]致谢[/h2]
-
-[b]AUTOMATIC1111[/b]（原作）、[b]IoIqq[/b]（1.7 移植）。

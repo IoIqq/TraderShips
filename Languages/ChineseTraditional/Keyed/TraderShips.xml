@@ -37,4 +37,137 @@
 
   <TraderShipsDebugOutOfBounds>請在地圖範圍內點擊以生成貿易飛船。</TraderShipsDebugOutOfBounds>
 
+<TraderShipsEnableShipRequestName>允許呼叫貿易飛船</TraderShipsEnableShipRequestName>
+  <TraderShipsEnableShipRequestDesc>在通訊台的外交對話框裡增加「請求貿易飛船」選項。花銀幣包一架飛船，並自行挑選船型，不必等隨機事件。需要對方為盟友</TraderShipsEnableShipRequestDesc>
+  <TraderShipsShipRequestCostName>呼叫飛船花費：{0} 銀</TraderShipsShipRequestCostName>
+  <TraderShipsShipRequestCostDesc>包一架貿易飛船需要多少銀幣。飛船抵達後才從殖民地扣除。</TraderShipsShipRequestCostDesc>
+  <TraderShipsRequestShipOption>請求派遣貿易飛船（花費：{COST} 銀）</TraderShipsRequestShipOption>
+  <TraderShipsRequestShipAllyOnly>需要對方為盟友。</TraderShipsRequestShipAllyOnly>
+  <TraderShipsRequestShipCooldown>還需等待 {0} 才能再次呼叫貿易飛船。</TraderShipsRequestShipCooldown>
+  <TraderShipsRequestShipLowSilver>包一架貿易飛船需要 {COST} 銀。</TraderShipsRequestShipLowSilver>
+  <TraderShipsRequestShipPickKind>{FACTION}應該派哪種飛船過來？</TraderShipsRequestShipPickKind>
+  <TraderShipsRequestShipFailed>暫時無法派出貿易飛船。</TraderShipsRequestShipFailed>
+  <TraderShipsRequestShipArrived>{KIND}已抵達。包船費：{COST} 銀。</TraderShipsRequestShipArrived>
+  <TraderShipsSilver>銀</TraderShipsSilver>
+
+<TraderShipsShipRequestAllyName>呼叫飛船需要盟友</TraderShipsShipRequestAllyName>
+  <TraderShipsShipRequestAllyDesc>關閉後，中立派系也能收銀幣派飛船。敵對派系永遠不行。</TraderShipsShipRequestAllyDesc>
+  <TraderShipsArrivalIntervalName>飛船最小間隔（天）：{0}</TraderShipsArrivalIntervalName>
+  <TraderShipsArrivalIntervalDesc>隨機到來的貿易飛船不會比這個更頻繁。設為 0 表示沿用原版敘事者的節奏。付費呼叫不受此限制。</TraderShipsArrivalIntervalDesc>
+
+<TraderShipsStayDaysName>飛船停留時長：{0} 天</TraderShipsStayDaysName>
+  <TraderShipsStayDaysDesc>飛船降落後等待多久才離開。原版約 0.67 天，對需要小人走過去交易的飛船來說偏短。</TraderShipsStayDaysDesc>
+  <TraderShipsMaxShipsName>同時停靠上限：{0} 艘</TraderShipsMaxShipsName>
+  <TraderShipsMaxShipsDesc>飛船會佔用地格且都瞄準同一片著陸區，這個上限避免它們擠在一起。付費呼叫同樣受此限制。</TraderShipsMaxShipsDesc>
+  <TraderShipsRequestShipAtCapacity>已達停靠上限（{MAX} 艘）。</TraderShipsRequestShipAtCapacity>
+
+<TraderShipsBakeGraphicsName>烘焙飛船貼圖（推薦）</TraderShipsBakeGraphicsName>
+  <TraderShipsBakeGraphicsDesc>把飛船的各個部件合成一張貼圖，每艘船只消耗一次繪製呼叫，而不是每個部件一次。如果飛船顯示異常，關掉這一項即可回退到舊的逐部件繪製。</TraderShipsBakeGraphicsDesc>
+
+<TraderShipsAnyFaction>船東</TraderShipsAnyFaction>
+  <TraderShipsShipDamagedText>{SHIP}遭到重創，即將起飛。船長代表{FACTION}要求賠償 {COST} 銀。</TraderShipsShipDamagedText>
+  <TraderShipsShipPayOption>賠償 {COST} 銀</TraderShipsShipPayOption>
+  <TraderShipsShipRefuseOption>拒絕（好感 -40）</TraderShipsShipRefuseOption>
+  <TraderShipsShipDeclareHostileOption>拒絕並承擔後果（轉為敵對）</TraderShipsShipDeclareHostileOption>
+  <TraderShipsShipNotEnoughSilver>需要 {COST} 銀。</TraderShipsShipNotEnoughSilver>
+  <TraderShipsShipCompensated>已賠償 {COST} 銀，飛船起飛離開。</TraderShipsShipCompensated>
+  <TraderShipsShipDestroyedHostile>你擊毀了貿易飛船，{FACTION}現已轉為敵對。</TraderShipsShipDestroyedHostile>
+
+<TraderShipsStowawayChanceName>偷渡客機率：{0}%</TraderShipsStowawayChanceName>
+  <TraderShipsStowawayChanceDesc>飛船降落後帶下一個偷渡客的機率。0 表示關閉。</TraderShipsStowawayChanceDesc>
+  <TraderShipsStowawayStayName>偷渡客停留：{0} 天</TraderShipsStowawayStayName>
+  <TraderShipsStowawayStayDesc>偷渡客停留多久後離隊走出地圖。</TraderShipsStowawayStayDesc>
+  <TraderShipsStowawayArrived>{PAWN}從貿易飛船上溜了下來，會在殖民地待 {DAYS} 天。</TraderShipsStowawayArrived>
+
+<TraderShipsBuyShip>購買貿易飛船（{PRICE} 銀）</TraderShipsBuyShip>
+  <TraderShipsBuyShipAlreadyOwn>你已經擁有一艘貿易飛船了。</TraderShipsBuyShipAlreadyOwn>
+  <TraderShipsBuyShipDone>你花 {PRICE} 銀買下了一艘貿易飛船。裝好貨後即可發射去別處交易。</TraderShipsBuyShipDone>
+  <TraderShipsBuyShipNoRoom>沒有足夠的空地停放新飛船。</TraderShipsBuyShipNoRoom>
+
+<TraderShipsRequestCooldownName>呼叫飛船冷卻：{0} 天</TraderShipsRequestCooldownName>
+  <TraderShipsRequestCooldownDesc>同一派系兩次呼叫飛船之間的等待時間。0 表示無冷卻。</TraderShipsRequestCooldownDesc>
+
+<TraderShipsBuyShipNoSeller>該派系目前沒有飛船停靠。</TraderShipsBuyShipNoSeller>
+
+<TraderShipsRequestShipNoKinds>該派系沒有可派遣的飛船類型。</TraderShipsRequestShipNoKinds>
+
+<TraderShipsStowawayLetterLabel>偷渡客請求收留</TraderShipsStowawayLetterLabel>
+  <TraderShipsStowawayLetterText>{PAWN}從貿易飛船上溜了下來，現在正在殖民地附近徘徊。{PAWN}沒有陣營，也無處可去 —— 收留就編入殖民地，拒絕則會在 {DAYS} 天內自行離開。</TraderShipsStowawayLetterText>
+  <TraderShipsStowawayAccept>收留{PAWN}</TraderShipsStowawayAccept>
+  <TraderShipsStowawayRefuse>拒絕{PAWN}</TraderShipsStowawayRefuse>
+
+<TraderShipsAutoFactionShipsName>派系專屬貿易飛船</TraderShipsAutoFactionShipsName>
+  <TraderShipsAutoFactionShipsDesc>為每個派系自動生成一艘貿易飛船，出售與該派系同屬一個模組的物品。下次啟動遊戲時生效。</TraderShipsAutoFactionShipsDesc>
+  <TraderShipsAutoKindLabel>{0}貿易飛船</TraderShipsAutoKindLabel>
+  <TraderShipsAutoKindDesc>由{0}派遣的貿易飛船，船上裝的是他們自己出產的貨物。</TraderShipsAutoKindDesc>
+
+<TraderShipsRequestShipHostile>敵對派系不會派遣飛船。</TraderShipsRequestShipHostile>
+
+<TraderShipsDispatchOption>使用貿易台</TraderShipsDispatchOption>
+  <TraderShipsDispatchRoot>貿易台</TraderShipsDispatchRoot>
+  <TraderShipsDispatchHail>呼叫{FACTION}</TraderShipsDispatchHail>
+  <TraderShipsDispatchNoPower>沒有電力。</TraderShipsDispatchNoPower>
+  <TraderShipsCommsSubmenu>貿易台……</TraderShipsCommsSubmenu>
+
+<TraderShipsAutoKind_Medical>{0}醫療船</TraderShipsAutoKind_Medical>
+  <TraderShipsAutoKind_Weapon>{0}武器船</TraderShipsAutoKind_Weapon>
+  <TraderShipsAutoKind_Apparel>{0}服裝船</TraderShipsAutoKind_Apparel>
+  <TraderShipsAutoKind_Slave>{0}奴隸船</TraderShipsAutoKind_Slave>
+  <TraderShipsAutoKindDesc_Medical>由{0}派遣的貿易飛船，船上裝的是藥品與醫療物資。</TraderShipsAutoKindDesc_Medical>
+  <TraderShipsAutoKindDesc_Weapon>由{0}派遣的貿易飛船，船上裝的是武器。</TraderShipsAutoKindDesc_Weapon>
+  <TraderShipsAutoKindDesc_Apparel>由{0}派遣的貿易飛船，船上裝的是服裝與護甲。</TraderShipsAutoKindDesc_Apparel>
+  <TraderShipsAutoKindDesc_Slave>由{0}派遣的飛船，船上載著成批的奴工。</TraderShipsAutoKindDesc_Slave>
+
+<TraderShipsDispatchFilterTradable>可交易</TraderShipsDispatchFilterTradable>
+  <TraderShipsDispatchFilterAll>全部派系</TraderShipsDispatchFilterAll>
+  <TraderShipsDispatchKindCount>{COUNT} 種船型</TraderShipsDispatchKindCount>
+  <TraderShipsDispatchNoKindsRow>無船</TraderShipsDispatchNoKindsRow>
+  <TraderShipsDispatchHostileRow>敵對</TraderShipsDispatchHostileRow>
+  <TraderShipsDispatchNoFactions>沒有可聯絡的派系。</TraderShipsDispatchNoFactions>
+
+<TraderShipsDispatchPickFaction>在左側選擇一個派系。</TraderShipsDispatchPickFaction>
+
+<TraderShipsDispatchHailShort>呼叫</TraderShipsDispatchHailShort>
+  <TraderShipsDispatchBuyShort>購買</TraderShipsDispatchBuyShort>
+  <TraderShipsDispatchCash>現金 {RANGE}</TraderShipsDispatchCash>
+
+<TraderShipsAutoKindShort_Medical>藥品與醫療物資</TraderShipsAutoKindShort_Medical>
+  <TraderShipsAutoKindShort_Weapon>武器</TraderShipsAutoKindShort_Weapon>
+  <TraderShipsAutoKindShort_Apparel>服裝與護甲</TraderShipsAutoKindShort_Apparel>
+  <TraderShipsAutoKindShort_Slave>待售奴工</TraderShipsAutoKindShort_Slave>
+  <TraderShipsDispatchTooltipStock>船上貨物：</TraderShipsDispatchTooltipStock>
+
+<TraderShipsDispatchUseLabel>使用貿易台</TraderShipsDispatchUseLabel>
+
+<TraderShipsAutoKind_General>{0}雜貨船</TraderShipsAutoKind_General>
+  <TraderShipsAutoKindDesc_General>由{0}派遣的貿易飛船，船上裝的是當地特產與雜貨。</TraderShipsAutoKindDesc_General>
+  <TraderShipsAutoKindShort_General>當地特產與雜貨</TraderShipsAutoKindShort_General>
+
+  <TraderShipsAutoKind_Food>{0}食物船</TraderShipsAutoKind_Food>
+  <TraderShipsAutoKindDesc_Food>由{0}派遣的飛船，裝的是成品餐、飲品與調味料。</TraderShipsAutoKindDesc_Food>
+  <TraderShipsAutoKindShort_Food>成品餐與飲品</TraderShipsAutoKindShort_Food>
+  <TraderShipsAutoKind_Resource>{0}物資船</TraderShipsAutoKind_Resource>
+  <TraderShipsAutoKindDesc_Resource>由{0}派遣的飛船，裝的是金屬、皮革、布料這類原材料。</TraderShipsAutoKindDesc_Resource>
+  <TraderShipsAutoKindShort_Resource>原材料與礦產</TraderShipsAutoKindShort_Resource>
+  <TraderShipsAutoKind_Industrial>{0}工業船</TraderShipsAutoKind_Industrial>
+  <TraderShipsAutoKindDesc_Industrial>由{0}派遣的飛船，裝的是零件、燃料與化工品。</TraderShipsAutoKindDesc_Industrial>
+  <TraderShipsAutoKindShort_Industrial>零件與工業品</TraderShipsAutoKindShort_Industrial>
+  <TraderShipsAutoKind_Furniture>{0}家具船</TraderShipsAutoKind_Furniture>
+  <TraderShipsAutoKindDesc_Furniture>由{0}派遣的飛船，裝的是能搬走的家具與建材。</TraderShipsAutoKindDesc_Furniture>
+  <TraderShipsAutoKindShort_Furniture>家具與建材</TraderShipsAutoKindShort_Furniture>
+  <TraderShipsAutoKind_Exotic>{0}珍寶船</TraderShipsAutoKind_Exotic>
+  <TraderShipsAutoKindDesc_Exotic>由{0}派遣的飛船，裝的是神器、遺物與超科技小件。</TraderShipsAutoKindDesc_Exotic>
+  <TraderShipsAutoKindShort_Exotic>神器與奇珍</TraderShipsAutoKindShort_Exotic>
+
+  <TraderShipsAutoKind_Talent>{0}人才船</TraderShipsAutoKind_Talent>
+  <TraderShipsAutoKindDesc_Talent>由{0}派遣的飛船，船上載著訓練有素的人才。</TraderShipsAutoKindDesc_Talent>
+  <TraderShipsAutoKindShort_Talent>高技能人才</TraderShipsAutoKindShort_Talent>
+
+  <TraderShipsGoodwillLostLabel>拒絕賠償</TraderShipsGoodwillLostLabel>
+  <TraderShipsGoodwillLost>你拒絕為受損的貿易船賠償，與{FACTION}的關係惡化了 {DELTA} 點。</TraderShipsGoodwillLost>
+  <TraderShipsGoodwillAlreadyLow>你拒絕為受損的貿易船賠償，與{FACTION}的關係已經無法更差。</TraderShipsGoodwillAlreadyLow>
+
+  <TraderShipsShipNotEnoughSilver>銀兩不足（需要 {COST} 銀）。</TraderShipsShipNotEnoughSilver>
+  <TraderShipsRequestShipUnderpaid>包船費只付清了 {PAID} / {COST} 銀，差額已按欠款處理。</TraderShipsRequestShipUnderpaid>
+  <TraderShipsBuyShipFailed>飛船生成失敗，已全額退款。</TraderShipsBuyShipFailed>
 </LanguageData>

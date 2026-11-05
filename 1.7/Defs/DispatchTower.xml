@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    贸易台：呼叫 / 购买贸易飞船的独立入口。
+
+    与通讯台的分工：
+      通讯台   —— 外交（联姻、援军、宣战……）
+      贸易台   —— 只做贸易，点开就是派系列表 → 呼叫 / 购买
+
+    参数对齐（见 Core/Defs/ThingDefs_Buildings/Buildings_Misc.xml 的 CommsConsole）：
+      研究  同为 MicroelectronicsBasics
+      成本  比通讯台便宜（钢 80 / 零部件 2，通讯台是 120 / 4）
+      电力  150W（通讯台 200W）
+  -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>TraderShipsDispatchTower</defName>
+    <label>trade terminal</label>
+    <description>A terminal for calling and buying trade ships. Does the same job as a comms console, but only for trade.</description>
+    <thingClass>TraderShips.Building_TradeDispatch</thingClass>
+
+    <graphicData>
+      <texPath>TraderShips/DispatchTower</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(3,2)</drawSize>
+      <shadowData>
+        <volume>(2.4, 1.4, 1.2)</volume>
+        <offset>(0, 0, -0.1)</offset>
+      </shadowData>
+    </graphicData>
+    <uiIconPath>TraderShips/DispatchTower</uiIconPath>
+
+    <altitudeLayer>Building</altitudeLayer>
+    <blockWind>true</blockWind>
+    <canOverlapZones>false</canOverlapZones>
+    <castEdgeShadows>false</castEdgeShadows>
+    <category>Building</category>
+
+    <building>
+      <destroySound>BuildingDestroyed_Metal_Big</destroySound>
+    </building>
+
+    <statBases>
+      <MaxHitPoints>180</MaxHitPoints>
+      <WorkToBuild>2200</WorkToBuild>
+      <Flammability>0.5</Flammability>
+      <Mass>30</Mass>
+      <Beauty>-2</Beauty>
+    </statBases>
+
+    <costList>
+      <Steel>80</Steel>
+      <ComponentIndustrial>2</ComponentIndustrial>
+    </costList>
+
+    <size>(3,2)</size>
+    <terrainAffordanceNeeded>Medium</terrainAffordanceNeeded>
+    <!--
+      贴图是正面朝下画的（屏幕下方是机器正面），所以要允许旋转并由默认朝向决定摆放；
+      interactionCellOffset 的 z 取 -2，让小人站在机器正前方（画面下侧）。
+      之前写 z=+2 且 rotatable=false，导致交互点和贴图朝向相反。
+    -->
+    <rotatable>true</rotatable>
+    <defaultPlacingRot>North</defaultPlacingRot>
+    <hasInteractionCell>true</hasInteractionCell>
+    <!-- z=-1：小人紧贴机器正面站立；-2 会多退一格 -->
+    <interactionCellOffset>(0, 0, -1)</interactionCellOffset>
+    <designationCategory>Misc</designationCategory>
+    <uiOrder>2105</uiOrder>
+    <soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
+    <!--
+      研究前置不写死，改由 DispatchTowerResearch 在启动时从 CommsConsole 复制。
+      这样其他模组如果改了通讯台的前置，贸易台会跟着变，
+      始终保持"解锁通讯台即解锁贸易台"。
+    -->
+
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <shortCircuitInRain>true</shortCircuitInRain>
+        <basePowerConsumption>150</basePowerConsumption>
+      </li>
+      <li Class="CompProperties_Flickable"></li>
+      <li Class="CompProperties_Breakdownable"></li>
+      <li Class="CompProperties_AffectedByFacilities"></li>
+
+      <!--
+        使用动作：走原版 JobDriver_UseItem，殖民者必须走到交互格并站定，
+        使用时长结束后才调用 CompUseEffect_TradeDispatch.DoEffect 弹窗。
+      -->
+      <li Class="CompProperties_Usable">
+        <useJob>UseItem</useJob>
+        <useLabel>Trade</useLabel>
+        <!-- 0 = 走到就立刻弹出界面，不要"使用中"那段等待 -->
+        <useDuration>0</useDuration>
+        <floatMenuOptionPriority>InitiateSocial</floatMenuOptionPriority>
+      </li>
+      <li Class="CompProperties_UseEffect">
+        <compClass>TraderShips.CompUseEffect_TradeDispatch</compClass>
+      </li>
+    </comps>
+  </ThingDef>
+
+</Defs>

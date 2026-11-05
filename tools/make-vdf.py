@@ -1,4 +1,4 @@
-﻿"""Generate the steamcmd workshop VDF for Trader Ships (Continued).
+"""Generate the steamcmd workshop VDF for Trader Ships (Continued).
 
 Modelled on the working CrematoriumValueFilter upload, which keeps the VDF
 description as a single escaped line (literal \\n sequences, not real newlines).
@@ -18,7 +18,11 @@ DESC_SRC = REPO / "workshop-description.txt"
 APPID = "294100"            # RimWorld
 TITLE = "Trader Ships (Continued)"
 VISIBILITY = "0"            # 0 public / 1 friends / 2 private
-CHANGENOTE = "1.7.0 - Initial release for RimWorld 1.7 (Waylith engine)."
+CHANGENOTE = ("1.8.0 - Trade desk building, auto-generated faction fleets (9 themed ship types "
+              "per faction), talent and slave ships, ship chartering with silver, compensation "
+              "demands only when your own colonists or turrets cause the damage, full cargo drop "
+              "when a ship is destroyed, factionless stowaways, 40-80 item kinds per ship using "
+              "vanilla categories and trade tags.")
 
 published_id = sys.argv[1] if len(sys.argv) > 1 else "0"
 

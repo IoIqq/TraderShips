@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+
+  <!--
+    Replace the vanilla orbital-trader worker with our subclass so that
+    "disable orbital traders" can divert the incident into a landing trade ship.
+
+    This is the XML-only replacement for the Harmony prefixes that used to patch
+    IncidentWorker_OrbitalTraderArrival.CanFireNowSub / TryExecuteWorker.
+    IncidentDef.workerClass is late-bound (Activator.CreateInstance), and both
+    methods are virtual, so no Harmony is required for this behaviour.
+
+    See Source/IncidentWorkerTraderShipArrival.cs.
+  -->
+  <Operation Class="PatchOperationReplace">
+    <xpath>Defs/IncidentDef[defName="OrbitalTraderArrival"]/workerClass</xpath>
+    <value>
+      <workerClass>TraderShips.IncidentWorkerTraderShipArrival</workerClass>
+    </value>
+  </Operation>
+
+</Patch>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+
+  <TraderShipsDispatchTower.label>貿易台</TraderShipsDispatchTower.label>
+  <TraderShipsDispatchTower.description>用於呼叫與購買貿易飛船的終端。功能類似通訊台，但只處理貿易。</TraderShipsDispatchTower.description>
+
+</LanguageData>

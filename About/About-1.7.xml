@@ -6,17 +6,16 @@
 		<li>1.7</li>
 	</supportedVersions>
 	<packageId>IoIqq.traderships.continued</packageId>
-	<modVersion>1.7.0</modVersion>
+	<modVersion>1.7.3</modVersion>
 	<url>https://github.com/IoIqq/TraderShips</url>
 
-	<modDependencies>
-		<li>
-			<packageId>brrainz.harmony</packageId>
-			<displayName>Harmony</displayName>
-			<steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
-			<downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
-		</li>
-	</modDependencies>
+	<!--
+		Harmony is deliberately NOT a modDependency any more.
+		Replacing vanilla orbital traders is done by swapping IncidentDef.workerClass
+		in 1.7/Patches/OrbitalTrader.xml, so the core mod needs no dependencies at all.
+		Harmony is only used, reflectively and optionally, for the extra
+		"request trade ship" comms-console option. See Source/TraderShips.cs.
+	-->
 	<loadAfter>
 		<li>brrainz.harmony</li>
 		<li>Ludeon.RimWorld.Royalty</li>
@@ -31,6 +30,6 @@ By default a comms console is still required; you can turn that off in mod setti
 
 This is the 1.7 (Waylith engine) continuation of AUTOMATIC1111's original Trader ships mod, kept up to date by IoIqq. Original design, art and code belong to AUTOMATIC1111.
 
-Requires Harmony.
+No dependencies: the mod works without Harmony. If you do have Harmony installed, an extra "request trade ship" option is added to the comms console faction dialog so you can call a ship for silver instead of waiting for the event.
 </description>
 </ModMetaData>

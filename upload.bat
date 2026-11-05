@@ -83,7 +83,19 @@ if not exist "%PY%" (
     echo   SKIP: python not found at %PY%
     echo   Using the existing VDF as-is.
 ) else (
-    "%PY%" "%REPO%\tools\make-vdf.py" >nul 2>&1
+    REM Pass the published ID when one is known, otherwise steamcmd would
+    REM CREATE a second workshop item every time instead of updating this one.
+    set "PFID="
+    if exist "%MODDIR%\About\PublishedFileId.txt" (
+        for /f "usebackq delims=" %%I in ("%MODDIR%\About\PublishedFileId.txt") do set "PFID=%%I"
+    )
+    if defined PFID (
+        echo   PublishedFileId: !PFID!
+        "%PY%" "%REPO%\tools\make-vdf.py" !PFID! >nul 2>&1
+    ) else (
+        echo   No PublishedFileId.txt - this run will CREATE a new item.
+        "%PY%" "%REPO%\tools\make-vdf.py" 0 >nul 2>&1
+    )
     if errorlevel 1 (
         echo   FAIL: make-vdf.py errored.
         pause
@@ -167,6 +179,15 @@ if exist "%MODDIR%\About\PublishedFileId.txt" (
 
 REM ---------- 7. upload ----------
 echo.
+REM Record how many lines the log already has. The verify step below must only
+REM look at lines THIS run produced -- an old "Upload finished ... : OK" from a
+REM previous session is not evidence of success. (It once made a failed run
+REM report "SUCCESS".)
+set "LOGLINES=0"
+if exist "%LOG%" (
+    for /f %%C in ('powershell -NoProfile -Command "if (Test-Path '%LOG%') { (Get-Content '%LOG%' | Measure-Object -Line).Lines } else { 0 }"') do set "LOGLINES=%%C"
+)
+
 echo [7/7] Uploading ...
 echo ------------------------------------------------------------
 REM Per the steamcmd docs, a command with arguments is best quoted as a whole:
@@ -186,7 +207,7 @@ echo --- verifying against the workshop log ---
 set "NEWID="
 set "SUCCESS=0"
 if exist "%LOG%" (
-    for /f "usebackq delims=" %%L in (`powershell -NoProfile -Command "$m = Select-String -Path '%LOG%' -Pattern 'Upload finished for workshop item (\d+) : OK' | Select-Object -Last 1; if ($m) { $m.Matches[0].Groups[1].Value }"`) do (
+    for /f "usebackq delims=" %%L in (`powershell -NoProfile -Command "$all = Get-Content '%LOG%'; $new = $all | Select-Object -Skip %LOGLINES%; $m = $new | Select-String -Pattern 'Upload finished for workshop item (\d+) : OK' | Select-Object -Last 1; if ($m) { $m.Matches[0].Groups[1].Value }"`) do (
         set "NEWID=%%L"
         set "SUCCESS=1"
     )

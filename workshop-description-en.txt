@@ -1,0 +1,106 @@
+[h1]Trader Ships (Continued)[/h1]
+
+The continuation of the old 1.6 mod "trade ships". I took the original author's work and built a lot more on top of it.
+Call trade ships down to your map and trade with them!
+
+The RimWorld 1.7 continuation of AUTOMATIC1111's Trader ships, ported and extended by IoIqq.
+
+[hr][/hr]
+
+[h1]New in this version[/h1]
+
+[h2]Trade Desk[/h2]
+Calling ships now uses a standalone powered 3x2 building, same research as the comms console but cheaper! It has its own custom UI, so the screen never turns into a mess - spare your archotech eyes! Right-click the trade desk with a pawn to call or buy ships. No more comms console.
+
+[h2]Faction fleets[/h2]
+Every faction now generates its own fleet from its own item pool, so it is much easier to get hold of that faction's gear, or its race as pawns! Each ship picks its stock at random from that faction's loot pool, in [b]9 themed types[/b]:
+
+[list]
+[*][b]Medical[/b] - medicine and medical supplies
+[*][b]Weapon[/b] - weapons and ammo, with some medicine mixed in
+[*][b]Apparel[/b] - clothing, armour, headgear
+[*][b]Food[/b] - prepared meals and drinks
+[*][b]Supply[/b] - metal, leather, textiles, minerals
+[*][b]Industrial[/b] - components, fuel, chemicals
+[*][b]Furniture[/b] - furniture and building materials you can carry
+[*][b]Relic[/b] - artifacts, relics, ultratech odds and ends
+[*][b]General[/b] - a bit of everything
+[/list]
+
+Plus two ships that sell people, so you can pick up more of those special xenotypes:
+
+[list]
+[*][b]Talent[/b] - 4-8 people, skills 14-20 with a passion, and they [b]join as colonists[/b] once bought
+[*][b]Slave[/b] - 10-18 people, relatively cheap, they join as slaves.
+[/list]
+
+[h2]Stock and ship types[/h2]
+Stock is picked per theme from [b]vanilla categories and trade tags[/b]
+
+Each ship type only buys back the kind of goods it deals in. The "will buy" tab in the trade window lists the full categories.
+
+[h2]Charter and purchase[/h2]
+Pay silver to call a specific ship type. The better your goodwill, the cheaper it gets (40% off at +100). You can also [b]buy a shuttle of your own[/b] straight from a faction - with a shuttle, you can be an orbital trader yourself! Price scales with goodwill.
+
+[h2]Ships can be attacked[/h2]
+Below 60% health, the captain demands compensation. Three outcomes:
+
+[list]
+[*]Pay up and it is settled
+[*]Refuse - goodwill drops
+[*]Refuse and accept the consequences - the faction turns hostile
+[/list]
+
+Destroy the ship outright and [b]every item on board drops to the ground (yes, you can use this to rob them)[/b] - but the faction becomes your enemy immediately.
+
+There is a friendly-fire guard (please do not let the tribal raiders blow up a ship and farm items, awa). Only when [b]your own colonists or turrets[/b] damage a ship will the captain come asking you for money. Fire, lightning and other factions' firefights are none of your business.
+
+[h2]Stowaways[/h2]
+A ship may bring down a [b]factionless[/b] person who wanders around near your colony. Take them in and they join the colony; refuse and they leave by themselves after a while.
+
+[hr][/hr]
+
+[h1]How to use[/h1]
+
+[list]
+[*]Research Microelectronics, then find the [b]Trade Desk[/b] in the architect menu (3x2, 80 steel + 2 components, needs power)
+[*]Right-click the trade desk with a pawn and pick [b]Trade[/b]
+[*]Pick a faction on the left, a ship type on the right, hit [b]Call[/b]
+[*]Once the ship lands, walk a pawn over and trade
+[/list]
+
+[h1]How to paint a landing zone[/h1]
+
+There are two tools in the Zone category: [b]Expand landing zone[/b] and [b]Clear landing zone[/b].
+
+Ships aim for the [b]centre of the whole zone[/b] to land - if you want several ships parked side by side, paint [b]several separate small zones[/b] rather than one big one.
+
+[h1]Requirements[/h1]
+
+[list]
+[*]RimWorld [b]1.7[/b] (the 1.1-1.6 folders are still bundled)
+[*][b]Harmony[/b] - [u]optional[/u]
+[/list]
+
+What happens without Harmony? Ships still arrive and trade as usual, the core functionality is unaffected. Only one thing stops working: the comms console will not gain the "Trade desk..." submenu - just use the standalone trade desk building and everything else is identical.
+
+No DLC required. With Royalty, ships will also use landing beacons as a fallback landing spot.
+
+[h1]Compatibility[/h1]
+
+[list]
+[*]Version: 1.7 (1.1-1.6 also declared)
+[*]Adds new Defs (trade desk, auto-generated ship types); does not change vanilla Def values
+[*]Safe to add to an existing save mid-game
+[*][b]Removing it mid-save is not recommended[/b] - any ship currently trading will disappear, and the landing zone is dropped too
+[*]If you run heavy mods that rework the trade UI, the ship list may end up misaligned
+[/list]
+
+[h1]Credits[/h1]
+
+[list]
+[*][b]AUTOMATIC1111[/b] - original mod: design, code, ship art
+[*][b]IoIqq[/b] - 1.7 port and further expansion
+[/list]
+
+If you are the original author and would rather this continuation did not exist, contact me and I will take it down.

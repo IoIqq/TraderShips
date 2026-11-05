@@ -37,4 +37,142 @@
 
   <TraderShipsDebugOutOfBounds>Click inside the map to spawn a trade ship.</TraderShipsDebugOutOfBounds>
 
+<TraderShipsEnableShipRequestName>Allow requesting trade ships</TraderShipsEnableShipRequestName>
+  <TraderShipsEnableShipRequestDesc>Adds a "Request trade ship" option to the comms console faction dialog. Pay silver to charter a ship of your chosen kind instead of waiting for the random event. Requires an ally faction.</TraderShipsEnableShipRequestDesc>
+  <TraderShipsShipRequestCostName>Silver cost per ship: {0}</TraderShipsShipRequestCostName>
+  <TraderShipsShipRequestCostDesc>How much silver a chartered trade ship costs. The payment is taken from the colony once the ship has arrived.</TraderShipsShipRequestCostDesc>
+  <TraderShipsRequestShipOption>Request a trade ship (cost: {COST} silver)</TraderShipsRequestShipOption>
+  <TraderShipsRequestShipAllyOnly>Requires an allied faction</TraderShipsRequestShipAllyOnly>
+  <TraderShipsRequestShipCooldown>You must wait {0} before requesting another trade ship.</TraderShipsRequestShipCooldown>
+  <TraderShipsRequestShipLowSilver>You need {COST} silver to charter a trade ship.</TraderShipsRequestShipLowSilver>
+  <TraderShipsRequestShipPickKind>Which kind of ship should {FACTION} send?</TraderShipsRequestShipPickKind>
+  <TraderShipsRequestShipFailed>No trade ship could be dispatched right now.</TraderShipsRequestShipFailed>
+  <TraderShipsRequestShipArrived>A {KIND} has arrived. Charter fee: {COST} silver.</TraderShipsRequestShipArrived>
+  <TraderShipsSilver>silver</TraderShipsSilver>
+
+<TraderShipsShipRequestAllyName>Require an allied faction</TraderShipsShipRequestAllyName>
+  <TraderShipsShipRequestAllyDesc>When off, neutral factions will also charter a ship for silver. Hostile factions never will.</TraderShipsShipRequestAllyDesc>
+  <TraderShipsArrivalIntervalName>Minimum days between ships: {0}</TraderShipsArrivalIntervalName>
+  <TraderShipsArrivalIntervalDesc>Random trade ships will not arrive more often than this. 0 leaves the vanilla storyteller cadence untouched. Paid requests are not affected.</TraderShipsArrivalIntervalDesc>
+
+<TraderShipsStayDaysName>Ship stay duration: {0} days</TraderShipsStayDaysName>
+  <TraderShipsStayDaysDesc>How long a landed trade ship waits before leaving. Vanilla uses about 0.67 days, which is short for a ship your pawns have to walk to.</TraderShipsStayDaysDesc>
+  <TraderShipsMaxShipsName>Maximum parked ships: {0}</TraderShipsMaxShipsName>
+  <TraderShipsMaxShipsDesc>Landed ships occupy real map space and all aim for the same landing zone, so this keeps them from piling up. Paid requests respect this limit too.</TraderShipsMaxShipsDesc>
+  <TraderShipsRequestShipAtCapacity>Already at the parked-ship limit ({MAX}).</TraderShipsRequestShipAtCapacity>
+
+<TraderShipsBakeGraphicsName>Bake ship graphics (recommended)</TraderShipsBakeGraphicsName>
+  <TraderShipsBakeGraphicsDesc>Combines each ship's parts into one texture so it costs a single draw call instead of one per part. Turn this off if ships look wrong; the old per-part drawing path is kept as a fallback.</TraderShipsBakeGraphicsDesc>
+
+<TraderShipsAnyFaction>the ship's owner</TraderShipsAnyFaction>
+  <TraderShipsShipDamagedText>{SHIP} has taken heavy fire and is about to lift off. The captain demands {COST} silver in compensation on behalf of {FACTION}.</TraderShipsShipDamagedText>
+  <TraderShipsShipPayOption>Pay {COST} silver</TraderShipsShipPayOption>
+  <TraderShipsShipRefuseOption>Refuse (goodwill -40)</TraderShipsShipRefuseOption>
+  <TraderShipsShipDeclareHostileOption>Refuse and accept the consequences (declares hostility)</TraderShipsShipDeclareHostileOption>
+  <TraderShipsShipNotEnoughSilver>You need {COST} silver.</TraderShipsShipNotEnoughSilver>
+  <TraderShipsShipCompensated>Paid {COST} silver in compensation. The ship lifts off.</TraderShipsShipCompensated>
+  <TraderShipsShipDestroyedHostile>You destroyed the trader ship. {FACTION} is now hostile.</TraderShipsShipDestroyedHostile>
+
+<TraderShipsStowawayChanceName>Stowaway chance: {0}%</TraderShipsStowawayChanceName>
+  <TraderShipsStowawayChanceDesc>Chance that a landed ship drops off a stowaway. 0 disables it.</TraderShipsStowawayChanceDesc>
+  <TraderShipsStowawayStayName>Stowaway stays: {0} days</TraderShipsStowawayStayName>
+  <TraderShipsStowawayStayDesc>How long a stowaway stays before walking off the map.</TraderShipsStowawayStayDesc>
+  <TraderShipsStowawayArrived>{PAWN} slipped off a trade ship and joined the colony for {DAYS} days.</TraderShipsStowawayArrived>
+
+<TraderShipsBuyShip>Buy a trade ship ({PRICE} silver)</TraderShipsBuyShip>
+  <TraderShipsBuyShipAlreadyOwn>You already own a trade ship.</TraderShipsBuyShipAlreadyOwn>
+  <TraderShipsBuyShipDone>You bought a trade ship for {PRICE} silver. Load it and launch it to trade elsewhere.</TraderShipsBuyShipDone>
+  <TraderShipsBuyShipNoRoom>There is no room to park your new ship.</TraderShipsBuyShipNoRoom>
+
+<TraderShipsRequestCooldownName>Ship request cooldown: {0} days</TraderShipsRequestCooldownName>
+  <TraderShipsRequestCooldownDesc>How long you must wait before calling another ship from the same faction. 0 removes the cooldown.</TraderShipsRequestCooldownDesc>
+
+<TraderShipsBuyShipNoSeller>No ship from this faction is currently docked.</TraderShipsBuyShipNoSeller>
+
+<TraderShipsRequestShipNoKinds>This faction has no ship type it can send.</TraderShipsRequestShipNoKinds>
+
+<TraderShipsStowawayLetterLabel>A stowaway asks to stay</TraderShipsStowawayLetterLabel>
+  <TraderShipsStowawayLetterText>{PAWN} slipped off a trade ship and is now wandering near your colony. With no faction and nowhere to go, {PAWN} will join the colony if taken in, and leave within {DAYS} days if turned away.</TraderShipsStowawayLetterText>
+  <TraderShipsStowawayAccept>Take {PAWN} in</TraderShipsStowawayAccept>
+  <TraderShipsStowawayRefuse>Turn {PAWN} away</TraderShipsStowawayRefuse>
+
+<TraderShipsAutoFactionShipsName>Faction-specific trade ships</TraderShipsAutoFactionShipsName>
+  <TraderShipsAutoFactionShipsDesc>Automatically create a trade ship for each faction, stocking items from the same mod that defines the faction. Takes effect on the next game start.</TraderShipsAutoFactionShipsDesc>
+  <TraderShipsAutoKindLabel>{0} trade ship</TraderShipsAutoKindLabel>
+  <TraderShipsAutoKindDesc>A trade ship sent by {0}, carrying goods made by their people.</TraderShipsAutoKindDesc>
+
+<TraderShipsRequestShipHostile>This faction is hostile and will not send ships.</TraderShipsRequestShipHostile>
+
+<TraderShipsDispatchOption>Use trade terminal</TraderShipsDispatchOption>
+  <TraderShipsDispatchRoot>Trade terminal</TraderShipsDispatchRoot>
+  <TraderShipsDispatchHail>Hail {FACTION}</TraderShipsDispatchHail>
+  <TraderShipsDispatchNoPower>No power.</TraderShipsDispatchNoPower>
+  <TraderShipsCommsSubmenu>Trade terminal...</TraderShipsCommsSubmenu>
+
+<TraderShipsAutoKind_Medical>{0} medical ship</TraderShipsAutoKind_Medical>
+  <TraderShipsAutoKind_Weapon>{0} arms ship</TraderShipsAutoKind_Weapon>
+  <TraderShipsAutoKind_Apparel>{0} apparel ship</TraderShipsAutoKind_Apparel>
+  <TraderShipsAutoKind_Slave>{0} slave ship</TraderShipsAutoKind_Slave>
+  <TraderShipsAutoKindDesc_Medical>A trade ship sent by {0}, stocked with medicine and drugs.</TraderShipsAutoKindDesc_Medical>
+  <TraderShipsAutoKindDesc_Weapon>A trade ship sent by {0}, stocked with weapons.</TraderShipsAutoKindDesc_Weapon>
+  <TraderShipsAutoKindDesc_Apparel>A trade ship sent by {0}, stocked with clothing and armor.</TraderShipsAutoKindDesc_Apparel>
+  <TraderShipsAutoKindDesc_Slave>A trade ship sent by {0}, carrying batches of slaves.</TraderShipsAutoKindDesc_Slave>
+
+<TraderShipsDispatchFilterTradable>Can trade</TraderShipsDispatchFilterTradable>
+  <TraderShipsDispatchFilterAll>All factions</TraderShipsDispatchFilterAll>
+  <TraderShipsDispatchKindCount>{COUNT} ship types</TraderShipsDispatchKindCount>
+  <TraderShipsDispatchNoKindsRow>No ships</TraderShipsDispatchNoKindsRow>
+  <TraderShipsDispatchHostileRow>Hostile</TraderShipsDispatchHostileRow>
+  <TraderShipsDispatchNoFactions>No factions can be contacted.</TraderShipsDispatchNoFactions>
+
+<TraderShipsDispatchPickFaction>Select a faction on the left.</TraderShipsDispatchPickFaction>
+
+<TraderShipsDispatchHailShort>Hail</TraderShipsDispatchHailShort>
+  <TraderShipsDispatchBuyShort>Buy</TraderShipsDispatchBuyShort>
+  <TraderShipsDispatchCash>cash {RANGE}</TraderShipsDispatchCash>
+
+<TraderShipsAutoKindShort_Medical>Medicine and drugs</TraderShipsAutoKindShort_Medical>
+  <TraderShipsAutoKindShort_Weapon>Weapons</TraderShipsAutoKindShort_Weapon>
+  <TraderShipsAutoKindShort_Apparel>Clothing and armor</TraderShipsAutoKindShort_Apparel>
+  <TraderShipsAutoKindShort_Slave>Slaves for sale</TraderShipsAutoKindShort_Slave>
+  <TraderShipsDispatchTooltipStock>Carries:</TraderShipsDispatchTooltipStock>
+
+<TraderShipsDispatchUseLabel>Use trade terminal</TraderShipsDispatchUseLabel>
+
+<TraderShipsAutoKind_General>{0} goods ship</TraderShipsAutoKind_General>
+  <TraderShipsAutoKindDesc_General>A trade ship sent by {0}, carrying their local goods.</TraderShipsAutoKindDesc_General>
+  <TraderShipsAutoKindShort_General>Local goods</TraderShipsAutoKindShort_General>
+
+  <!-- Additional themes: food / resources / industry / furniture / exotic -->
+  <TraderShipsAutoKind_Food>{0} food ship</TraderShipsAutoKind_Food>
+  <TraderShipsAutoKindDesc_Food>A trade ship sent by {0}, carrying meals, drinks and spices.</TraderShipsAutoKindDesc_Food>
+  <TraderShipsAutoKindShort_Food>Meals and drinks</TraderShipsAutoKindShort_Food>
+
+  <TraderShipsAutoKind_Resource>{0} supply ship</TraderShipsAutoKind_Resource>
+  <TraderShipsAutoKindDesc_Resource>A trade ship sent by {0}, carrying metal, leather and textiles.</TraderShipsAutoKindDesc_Resource>
+  <TraderShipsAutoKindShort_Resource>Raw materials</TraderShipsAutoKindShort_Resource>
+
+  <TraderShipsAutoKind_Industrial>{0} industrial ship</TraderShipsAutoKind_Industrial>
+  <TraderShipsAutoKindDesc_Industrial>A trade ship sent by {0}, carrying components, fuel and chemicals.</TraderShipsAutoKindDesc_Industrial>
+  <TraderShipsAutoKindShort_Industrial>Components and industry</TraderShipsAutoKindShort_Industrial>
+
+  <TraderShipsAutoKind_Furniture>{0} furniture ship</TraderShipsAutoKind_Furniture>
+  <TraderShipsAutoKindDesc_Furniture>A trade ship sent by {0}, carrying furniture and building materials.</TraderShipsAutoKindDesc_Furniture>
+  <TraderShipsAutoKindShort_Furniture>Furniture and materials</TraderShipsAutoKindShort_Furniture>
+
+  <TraderShipsAutoKind_Exotic>{0} relic ship</TraderShipsAutoKind_Exotic>
+  <TraderShipsAutoKindDesc_Exotic>A trade ship sent by {0}, carrying artifacts, relics and ultratech.</TraderShipsAutoKindDesc_Exotic>
+  <TraderShipsAutoKindShort_Exotic>Artifacts and relics</TraderShipsAutoKindShort_Exotic>
+
+  <TraderShipsAutoKind_Talent>{0} talent ship</TraderShipsAutoKind_Talent>
+  <TraderShipsAutoKindDesc_Talent>A trade ship sent by {0}, carrying highly skilled people.</TraderShipsAutoKindDesc_Talent>
+  <TraderShipsAutoKindShort_Talent>Skilled people</TraderShipsAutoKindShort_Talent>
+
+  <TraderShipsGoodwillLostLabel>Compensation refused</TraderShipsGoodwillLostLabel>
+  <TraderShipsGoodwillLost>You refused to compensate the damaged trade ship. Relations with {FACTION} worsened by {DELTA}.</TraderShipsGoodwillLost>
+  <TraderShipsGoodwillAlreadyLow>You refused to compensate the damaged trade ship. Relations with {FACTION} cannot get any worse.</TraderShipsGoodwillAlreadyLow>
+
+  <TraderShipsShipNotEnoughSilver>Not enough silver (need {COST}).</TraderShipsShipNotEnoughSilver>
+  <TraderShipsRequestShipUnderpaid>The charter fee was only covered for {PAID} of {COST} silver; the shortfall was written off.</TraderShipsRequestShipUnderpaid>
+  <TraderShipsBuyShipFailed>The ship could not be created. You have been fully refunded.</TraderShipsBuyShipFailed>
 </LanguageData>

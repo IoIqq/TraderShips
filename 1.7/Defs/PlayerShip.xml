@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!--
+    玩家可购买的运输飞船。
+
+    复用了本模组已有的船体贴图与升降动画，但走的是原版 Core 的穿梭机框架
+    （CompShuttle / CompTransporter / TransportShip），不是 Odyssey 的引力船：
+    Gravity 那套需要 GravEngine + 连通的 Substructure 地形，改造量巨大。
+    穿梭机框架完全在 Core 里，CompShuttle.cs / TransportShip.cs 中没有任何
+    OdysseyActive 判断，因此不依赖任何 DLC。
+
+    装载、发射、飞行、降落、卸载全部由原版 CompShuttle 接管，
+    我们只负责「把它卖给玩家」。
+  -->
+
+  <ThingDef ParentName="TraderShipBuildingBase">
+    <defName>TraderShipsPlayerShip</defName>
+    <label>trade ship</label>
+    <description>A trade ship you own. Load it with goods and pawns, then launch it to trade at other settlements.</description>
+    <thingClass>TraderShips.Building_Ship</thingClass>
+
+    <graphicData>
+      <texPath>TraderShips/empty</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shadowData>
+        <volume>(4.1, 1.0, 1.8)</volume>
+        <offset>(0, 0, -0.1)</offset>
+      </shadowData>
+    </graphicData>
+    <uiIconPath>TraderShips/ship</uiIconPath>
+
+    <statBases>
+      <MaxHitPoints>4000</MaxHitPoints>
+      <Flammability>1</Flammability>
+      <Mass>300</Mass>
+    </statBases>
+
+    <altitudeLayer>Building</altitudeLayer>
+    <fillPercent>1.0</fillPercent>
+    <tickerType>Normal</tickerType>
+    <size>(7,3)</size>
+
+    <interactionCellOffset>(0,0,-2)</interactionCellOffset>
+    <hasInteractionCell>true</hasInteractionCell>
+    <rotatable>false</rotatable>
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+    <soundImpactDefault>BulletImpact_Metal</soundImpactDefault>
+    <preventSkyfallersLandingOn>true</preventSkyfallersLandingOn>
+    <drawerType>MapMeshAndRealTime</drawerType>
+    <canOverlapZones>true</canOverlapZones>
+
+    <building>
+      <claimable>false</claimable>
+      <isInert>true</isInert>
+      <destroySound>BuildingDestroyed_Metal_Big</destroySound>
+    </building>
+
+    <inspectorTabs>
+      <li>ITab_ContentsTransporter</li>
+    </inspectorTabs>
+
+    <comps>
+      <!--
+        双组件架构：
+          CompShip       —— 保留随机拼装 + 手绘（base/chassis/turbine/weapon 四类部件随机组合）
+          CompShuttle    —— 装载 / 发射 / 飞行 / 降落，走原版 Core 穿梭机框架
+
+        船体 graphicData 用 empty 占位，避免标准 Graphic 绘制和 CompShip 手绘重叠。
+        这是唯一能把「随机外观」和「穿梭机玩法」同时保留的做法：
+        Graphic 没有构造函数（只有 Init(GraphicRequest)），无法在运行时塞入烘焙贴图。
+      -->
+      <li Class="TraderShips.CompPropertiesShip">
+        <shipgen>trader</shipgen>
+        <landAnimation>TraderShipsPlayerShipIncoming</landAnimation>
+        <takeoffAnimation>TraderShipsPlayerShipLeaving</takeoffAnimation>
+        <soundThud>TraderShipsSoundThud</soundThud>
+        <crashScatterRadius>6</crashScatterRadius>
+        <crashScatterChunk>TraderShipsShipChunk</crashScatterChunk>
+        <crashScatterChunkCount>4~8</crashScatterChunkCount>
+        <crashPilotCount>1~3</crashPilotCount>
+        <crashPilotKind>TraderShipsTrader</crashPilotKind>
+      </li>
+      <li Class="CompProperties_Shuttle">
+        <shipDef>TraderShipsPlayerShipDef</shipDef>
+      </li>
+      <li Class="CompProperties_Transporter">
+        <massCapacity>800</massCapacity>
+        <max1PerGroup>true</max1PerGroup>
+        <canChangeAssignedThingsAfterStarting>true</canChangeAssignedThingsAfterStarting>
+        <pawnLoadedSound>Shuttle_PawnLoaded</pawnLoadedSound>
+        <pawnExitSound>Shuttle_PawnExit</pawnExitSound>
+        <showMassInInspectString>true</showMassInInspectString>
+      </li>
+      <li Class="CompProperties_Launchable">
+        <fuelPerTile>3</fuelPerTile>
+        <minFuelCost>50</minFuelCost>
+        <skyfallerLeaving>TraderShipsPlayerShipLeaving</skyfallerLeaving>
+        <worldObjectDef>TraderShipsPlayerShipWorldObject</worldObjectDef>
+        <cooldownTicks>3750</cooldownTicks>
+        <cooldownEndedMessage>{0} is ready to launch again.</cooldownEndedMessage>
+      </li>
+      <li Class="CompProperties_Refuelable">
+        <fuelCapacity>400</fuelCapacity>
+        <targetFuelLevelConfigurable>true</targetFuelLevelConfigurable>
+        <initialConfigurableTargetFuelLevel>400</initialConfigurableTargetFuelLevel>
+        <fuelFilter>
+          <thingDefs>
+            <li>Chemfuel</li>
+          </thingDefs>
+        </fuelFilter>
+        <fuelLabel>Chemfuel</fuelLabel>
+        <fuelGizmoLabel>Chemfuel</fuelGizmoLabel>
+        <consumeFuelOnlyWhenUsed>true</consumeFuelOnlyWhenUsed>
+        <autoRefuelPercent>1</autoRefuelPercent>
+        <showFuelGizmo>true</showFuelGizmo>
+        <drawOutOfFuelOverlay>false</drawOutOfFuelOverlay>
+        <showAllowAutoRefuelToggle>true</showAllowAutoRefuelToggle>
+        <canEjectFuel>true</canEjectFuel>
+      </li>
+    </comps>
+  </ThingDef>
+
+  <TransportShipDef>
+    <defName>TraderShipsPlayerShipDef</defName>
+    <label>trade ship</label>
+    <shipThing>TraderShipsPlayerShip</shipThing>
+    <arrivingSkyfaller>TraderShipsPlayerShipIncoming</arrivingSkyfaller>
+    <leavingSkyfaller>TraderShipsPlayerShipLeaving</leavingSkyfaller>
+    <worldObject>TraderShipsPlayerShipWorldObject</worldObject>
+    <playerShuttle>true</playerShuttle>
+  </TransportShipDef>
+
+  <!-- 飞行途中的世界地图形态。直接继承 Core 的 ShuttleWorldObjectBase，
+       worldObjectClass 是原版的 TravellingTransporters，不需要自己实现。 -->
+  <WorldObjectDef ParentName="ShuttleWorldObjectBase">
+    <defName>TraderShipsPlayerShipWorldObject</defName>
+    <label>trade ship in flight</label>
+    <description>A trade ship you own, travelling to its destination.</description>
+    <expandingIconTexture>World/WorldObjects/Expanding/TravelingShuttle</expandingIconTexture>
+    <expandingIconDrawSize>1.2</expandingIconDrawSize>
+  </WorldObjectDef>
+
+</Defs>

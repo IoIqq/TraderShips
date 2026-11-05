@@ -1,4 +1,4 @@
-﻿# Trader Ships — RimWorld 1.7 (Waylith Engine) 移植说明
+# Trader Ships — RimWorld 1.7 (Waylith Engine) 移植说明
 
 ## 背景结论（先纠正一个前提）
 
@@ -217,3 +217,66 @@ TraderShips 构造失败 (TypeLoadException: HarmonyLib.Harmony)
 - [ ] 如需上工坊，把 `About/About-1.7.xml` 的内容提为主 `About.xml` 并加 `<li>1.6</li>`
 - [ ] `Source/packages.config` 和旧 `TraderShips.csproj`（Framework 4.7.2）保留作 1.5 及更早版本的构建，不要删除
 - [ ] `tools/` 下的验证程序仅用于开发期，发布时不必打包
+
+## 1.7.3 — 去掉 Harmony 硬依赖
+
+### 背景
+
+1.7.2 之前，「禁用轨道商船」靠 Harmony 前缀补丁改
+`IncidentWorker_OrbitalTraderArrival` 的 `CanFireNowSub` / `TryExecuteWorker`。
+这使 Harmony 成为实际上的必装前置，也让 `TraderShips.cs` 里堆了 200 行反射修补代码。
+
+### 关键发现
+
+原版这两个钩子本来就是可替换的：
+
+```csharp
+// IncidentDef.cs:148 —— workerClass 是延迟绑定
+workerInt = (IncidentWorker)Activator.CreateInstance(workerClass);
+
+// IncidentWorker.cs:178 / 289 —— 两个钩子都是 virtual
+protected virtual bool CanFireNowSub(IncidentParms parms)
+protected virtual bool TryExecuteWorker(IncidentParms parms)
+```
+
+### 改法
+
+1. 新增 `IncidentWorkerTraderShipArrival : IncidentWorker_OrbitalTraderArrival`，
+   覆写两个钩子，逻辑与原来的前缀完全一致
+2. `1.7/Patches/OrbitalTrader.xml` 用 `PatchOperationReplace` 换掉
+   `IncidentDef[defName="OrbitalTraderArrival"]/workerClass`
+3. 删除 `Source/Patch/PatchIncidentWorker_OrbitalTraderArrival.cs` 与
+   `TraderShips.cs` 里的 `PatchTarget`（约 60 行）
+4. `About-1.7.xml` 移除 `modDependencies`，Harmony 转为可选
+
+### 结果
+
+| | 1.7.2 | 1.7.3 |
+| --- | --- | --- |
+| 核心功能（飞船到来/交易/替换轨道商） | 需要 Harmony | **零依赖** |
+| 通讯台「请求贸易飞船」 | 需要 Harmony | 仍需 Harmony（静态方法，XML 够不着） |
+| DLL 中的 HarmonyLib 引用 | 0（反射调用） | 0 |
+
+> `tools/preflight.py` 的断言也同步反转了：现在检查的是
+> 「Harmony **不得**重新变成硬依赖」，防止以后误改回去。
+
+### 副作用（需知）
+
+玩家中途卸载本模组时，`OrbitalTraderArrival` 会指向不存在的类，日志报一条 def 错误。
+比 1.7.2 的「Harmony 没装就少一个功能」更显性，工坊页面已注明不要中途移除。
+
+## 1.7.3 — 调试菜单改用原生口子
+
+1.7 的 `DebugTabMenu_Actions.InitActions` 支持 `[DebugActionYielder]`：
+
+```csharp
+if (!methodInfo.TryGetAttribute<DebugActionYielderAttribute>(out var _)) continue;
+foreach (DebugActionNode item in (IEnumerable<DebugActionNode>)methodInfo.Invoke(null, null))
+    myRoot.AddChild(item);
+```
+
+于是新增 `Debug.TradeShipDebugActions()` 直接产出节点树，节点构建逻辑
+（`Debug.BuildNode()`）由特性路径与 `DebugNodeInjector` 共用，不再有重复实现。
+
+`DebugNodeInjector` 保留：`InitActions` 仍遍历缓存过的 `GenTypes.AllTypes`，
+重度模组环境下可能漏掉本程序集。

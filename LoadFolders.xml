@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<loadFolders>
+  <!--
+    多版本兼容的加载清单。
+
+    <li>/</li> 表示根目录始终加载（About、Languages、Textures、Sounds 都在这里）。
+    版本子目录只在对应游戏版本下加载，里面放各自编译好的 DLL 和 Def。
+
+    注意 1.1~1.5 的 Assemblies 里带 0Harmony.dll —— 那是旧版做法；
+    1.7 不再随包分发 Harmony，改为可选依赖。所以 1.7 目录里没有它。
+  -->
+  <v1.1>
+    <li>/</li>
+    <li>1.1</li>
+  </v1.1>
+  <v1.2>
+    <li>/</li>
+    <li>1.2</li>
+  </v1.2>
+  <v1.3>
+    <li>/</li>
+    <li>1.3</li>
+  </v1.3>
+  <v1.4>
+    <li>/</li>
+    <li>1.4</li>
+  </v1.4>
+  <v1.5>
+    <li>/</li>
+    <li>1.5</li>
+  </v1.5>
+  <v1.6>
+    <li>/</li>
+    <li>1.5</li>
+  </v1.6>
+  <v1.7>
+    <li>/</li>
+    <li>1.7</li>
+  </v1.7>
+</loadFolders>

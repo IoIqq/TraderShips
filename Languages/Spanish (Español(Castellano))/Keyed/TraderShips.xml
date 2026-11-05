@@ -17,7 +17,6 @@
 
   <TraderShipsLandingZone>Zona de aterrizaje</TraderShipsLandingZone>
   <TraderShipsLandingZoneExpandName>Ampliar zona de aterrizaje</TraderShipsLandingZoneExpandName>
-  <TraderShipsLandingZoneExpandName>Ampliar zona de aterrizaje</TraderShipsLandingZoneExpandName>
   <TraderShipsLandingZoneExpandDesc>Crea un área que las naves espaciales prefieran como zona de aterrizaje. Una nave intentará aterrizar en el medio de una zona de aterrizaje, por lo que si desea una plataforma de aterrizaje grande con varias naves, designe múltiples zonas que no se crucen.</TraderShipsLandingZoneExpandDesc>
   <TraderShipsLandingZoneClearName>Eliminar zona de aterrizaje</TraderShipsLandingZoneClearName>
   <TraderShipsLandingZoneClearDesc>Eliminar el área de la zona de aterrizaje, haciendo que las naves espaciales elijan dónde aterrizar.</TraderShipsLandingZoneClearDesc>
@@ -25,4 +24,148 @@
   <TraderShipsLandingZoneBlocked>La nave espacial no pudo aterrizar en la zona de aterrizaje: {0}.</TraderShipsLandingZoneBlocked>
   <TraderShipsBlockedBy>bloqueado por {0_label}</TraderShipsBlockedBy>
 
+<TraderShipsEnableShipRequestName>Permitir solicitar naves comerciales</TraderShipsEnableShipRequestName>
+  <TraderShipsEnableShipRequestDesc>Añade una opción "Solicitar nave comercial" al diálogo de facción de la consola de comunicaciones. Paga plata para fletar una nave del tipo que elijas en lugar de esperar el evento aleatorio. Requiere una facción aliada</TraderShipsEnableShipRequestDesc>
+  <TraderShipsShipRequestCostName>Coste en plata por nave: {0}</TraderShipsShipRequestCostName>
+  <TraderShipsShipRequestCostDesc>Cuánta plata cuesta fletar una nave comercial. El pago se toma de la colonia cuando la nave ha llegado.</TraderShipsShipRequestCostDesc>
+  <TraderShipsRequestShipOption>Solicitar una nave comercial (coste: {COST} de plata)</TraderShipsRequestShipOption>
+  <TraderShipsRequestShipAllyOnly>Requiere una facción aliada.</TraderShipsRequestShipAllyOnly>
+  <TraderShipsRequestShipCooldown>Debes esperar {0} antes de solicitar otra nave comercial.</TraderShipsRequestShipCooldown>
+  <TraderShipsRequestShipLowSilver>Necesitas {COST} de plata para fletar una nave comercial.</TraderShipsRequestShipLowSilver>
+  <TraderShipsRequestShipPickKind>¿Qué tipo de nave debería enviar {FACTION}?</TraderShipsRequestShipPickKind>
+  <TraderShipsRequestShipFailed>No se pudo enviar ninguna nave comercial ahora.</TraderShipsRequestShipFailed>
+  <TraderShipsRequestShipArrived>Ha llegado una nave {KIND}. Tarifa de flete: {COST} de plata.</TraderShipsRequestShipArrived>
+  <TraderShipsSilver>plata</TraderShipsSilver>
+
+<TraderShipsRequireCommssConsoleName>Requerir consola de comunicaciones</TraderShipsRequireCommssConsoleName>
+  <TraderShipsRequireCommssConsoleDesc>Las naves no vendrán a menos que tengas una consola de comunicaciones.</TraderShipsRequireCommssConsoleDesc>
+  <TraderShipsEnableQuestsName>Activar misiones</TraderShipsEnableQuestsName>
+  <TraderShipsEnableQuestsDesc>Activa las misiones relacionadas con las naves comerciales.</TraderShipsEnableQuestsDesc>
+  <TraderShipsSaturationName>Rango de saturación</TraderShipsSaturationName>
+  <TraderShipsSaturationDesc>Las naves generadas tendrán color HSV con la saturación dentro del rango indicado (además limitado a [0,100]).</TraderShipsSaturationDesc>
+  <TraderShipsValueName>Rango de valor</TraderShipsValueName>
+  <TraderShipsValueDesc>Las naves generadas tendrán color HSV con el valor dentro del rango indicado (además limitado a [0,100]).</TraderShipsValueDesc>
+  <TraderShipsRerollColors>Volver a sortear colores</TraderShipsRerollColors>
+  <TraderShipsQuestRequestInfo>Solicitando: {0} ({1})</TraderShipsQuestRequestInfo>
+  <TraderShipsDebugOutOfBounds>Haz clic dentro del mapa para generar una nave comercial.</TraderShipsDebugOutOfBounds>
+<TraderShipsShipRequestAllyName>Requerir una facción aliada</TraderShipsShipRequestAllyName>
+  <TraderShipsShipRequestAllyDesc>Si se desactiva, las facciones neutrales también fletarán una nave a cambio de plata. Las facciones hostiles nunca lo harán.</TraderShipsShipRequestAllyDesc>
+  <TraderShipsArrivalIntervalName>Días mínimos entre naves: {0}</TraderShipsArrivalIntervalName>
+  <TraderShipsArrivalIntervalDesc>Las naves comerciales aleatorias no llegarán con más frecuencia que esto. 0 deja el ritmo del narrador original intacto. Las solicitudes de pago no se ven afectadas.</TraderShipsArrivalIntervalDesc>
+
+<TraderShipsStayDaysName>Duración de estancia: {0} días</TraderShipsStayDaysName>
+  <TraderShipsStayDaysDesc>Cuánto espera una nave posada antes de partir. El original usa unos 0,67 días, poco para una nave a la que tus colonos deben caminar.</TraderShipsStayDaysDesc>
+  <TraderShipsMaxShipsName>Naves aparcadas como máximo: {0}</TraderShipsMaxShipsName>
+  <TraderShipsMaxShipsDesc>Las naves posadas ocupan espacio real del mapa y todas apuntan a la misma zona de aterrizaje, así que este límite evita que se amontonen. Las solicitudes de pago también lo respetan.</TraderShipsMaxShipsDesc>
+  <TraderShipsRequestShipAtCapacity>Ya se alcanzó el límite de naves aparcadas ({MAX}).</TraderShipsRequestShipAtCapacity>
+
+<TraderShipsBakeGraphicsName>Combinar gráficos de naves (recomendado)</TraderShipsBakeGraphicsName>
+  <TraderShipsBakeGraphicsDesc>Combina las piezas de cada nave en una sola textura, de modo que cuesta una única llamada de dibujo en vez de una por pieza. Desactívalo si las naves se ven mal; el dibujo pieza a pieza se conserva como alternativa.</TraderShipsBakeGraphicsDesc>
+
+<TraderShipsAnyFaction>el armador</TraderShipsAnyFaction>
+  <TraderShipsShipDamagedText>{SHIP} ha recibido fuego intenso y está a punto de despegar. El capitán exige {COST} de plata en compensación en nombre de {FACTION}.</TraderShipsShipDamagedText>
+  <TraderShipsShipPayOption>Pagar {COST} de plata</TraderShipsShipPayOption>
+  <TraderShipsShipRefuseOption>Rechazar (buena voluntad -40)</TraderShipsShipRefuseOption>
+  <TraderShipsShipDeclareHostileOption>Rechazar y aceptar las consecuencias (declara hostilidad)</TraderShipsShipDeclareHostileOption>
+  <TraderShipsShipNotEnoughSilver>Necesitas {COST} de plata.</TraderShipsShipNotEnoughSilver>
+  <TraderShipsShipCompensated>Pagaste {COST} de plata en compensación. La nave despega.</TraderShipsShipCompensated>
+  <TraderShipsShipDestroyedHostile>Destruiste la nave comercial. {FACTION} ahora es hostil.</TraderShipsShipDestroyedHostile>
+
+<TraderShipsStowawayChanceName>Probabilidad de polizón: {0}%</TraderShipsStowawayChanceName>
+  <TraderShipsStowawayChanceDesc>Probabilidad de que una nave posada deje a un polizón. 0 lo desactiva.</TraderShipsStowawayChanceDesc>
+  <TraderShipsStowawayStayName>El polizón se queda: {0} días</TraderShipsStowawayStayName>
+  <TraderShipsStowawayStayDesc>Cuánto tiempo se queda un polizón antes de irse del mapa.</TraderShipsStowawayStayDesc>
+  <TraderShipsStowawayArrived>{PAWN} se bajó de una nave comercial y se unió a la colonia durante {DAYS} días.</TraderShipsStowawayArrived>
+
+<TraderShipsBuyShip>Comprar una nave comercial ({PRICE} de plata)</TraderShipsBuyShip>
+  <TraderShipsBuyShipAlreadyOwn>Ya posees una nave comercial.</TraderShipsBuyShipAlreadyOwn>
+  <TraderShipsBuyShipDone>Compraste una nave comercial por {PRICE} de plata. Cárgala y lánzala para comerciar en otro lugar.</TraderShipsBuyShipDone>
+  <TraderShipsBuyShipNoRoom>No hay espacio para aparcar tu nueva nave.</TraderShipsBuyShipNoRoom>
+
+<TraderShipsRequestCooldownName>Enfriamiento de solicitud: {0} días</TraderShipsRequestCooldownName>
+  <TraderShipsRequestCooldownDesc>Cuánto debes esperar antes de llamar a otra nave de la misma facción. 0 elimina el enfriamiento.</TraderShipsRequestCooldownDesc>
+
+<TraderShipsBuyShipNoSeller>Ninguna nave de esta facción está atracada ahora mismo.</TraderShipsBuyShipNoSeller>
+
+<TraderShipsRequestShipNoKinds>Esta facción no tiene ningún tipo de nave que pueda enviar.</TraderShipsRequestShipNoKinds>
+
+<TraderShipsStowawayLetterLabel>Un polizón pide quedarse</TraderShipsStowawayLetterLabel>
+  <TraderShipsStowawayLetterText>{PAWN} se coló desde un barco mercante y ahora vaga cerca de tu colonia. {PAWN} no tiene facción ni adónde ir: si lo acoges se une a la colonia, y si lo rechazas se irá en {DAYS} días.</TraderShipsStowawayLetterText>
+  <TraderShipsStowawayAccept>Acoger a {PAWN}</TraderShipsStowawayAccept>
+  <TraderShipsStowawayRefuse>Rechazar a {PAWN}</TraderShipsStowawayRefuse>
+
+<TraderShipsAutoFactionShipsName>Naves comerciales por facción</TraderShipsAutoFactionShipsName>
+  <TraderShipsAutoFactionShipsDesc>Crea automáticamente una nave comercial para cada facción, con artículos del mismo mod que define la facción. Se aplica al reiniciar el juego.</TraderShipsAutoFactionShipsDesc>
+  <TraderShipsAutoKindLabel>Nave comercial de {0}</TraderShipsAutoKindLabel>
+  <TraderShipsAutoKindDesc>Una nave comercial enviada por {0}, cargada con bienes de su propio pueblo.</TraderShipsAutoKindDesc>
+
+<TraderShipsRequestShipHostile>Esta facción es hostil y no enviará naves.</TraderShipsRequestShipHostile>
+
+<TraderShipsDispatchOption>Usar despacho comercial</TraderShipsDispatchOption>
+  <TraderShipsDispatchRoot>Despacho comercial</TraderShipsDispatchRoot>
+  <TraderShipsDispatchHail>Llamar a {FACTION}</TraderShipsDispatchHail>
+  <TraderShipsDispatchNoPower>Sin energía.</TraderShipsDispatchNoPower>
+  <TraderShipsCommsSubmenu>Despacho comercial...</TraderShipsCommsSubmenu>
+
+<TraderShipsAutoKind_Medical>Nave médica de {0}</TraderShipsAutoKind_Medical>
+  <TraderShipsAutoKind_Weapon>Nave de armas de {0}</TraderShipsAutoKind_Weapon>
+  <TraderShipsAutoKind_Apparel>Nave de ropa de {0}</TraderShipsAutoKind_Apparel>
+  <TraderShipsAutoKind_Slave>{0} barco de esclavos</TraderShipsAutoKind_Slave>
+  <TraderShipsAutoKindDesc_Medical>Una nave comercial enviada por {0}, cargada con medicinas y drogas.</TraderShipsAutoKindDesc_Medical>
+  <TraderShipsAutoKindDesc_Weapon>Una nave comercial enviada por {0}, cargada con armas.</TraderShipsAutoKindDesc_Weapon>
+  <TraderShipsAutoKindDesc_Apparel>Una nave comercial enviada por {0}, cargada con ropa y armaduras.</TraderShipsAutoKindDesc_Apparel>
+  <TraderShipsAutoKindDesc_Slave>Un barco enviado por {0}, con lotes de esclavos.</TraderShipsAutoKindDesc_Slave>
+
+<TraderShipsDispatchFilterTradable>Se puede comerciar</TraderShipsDispatchFilterTradable>
+  <TraderShipsDispatchFilterAll>Todas las facciones</TraderShipsDispatchFilterAll>
+  <TraderShipsDispatchKindCount>{COUNT} tipos de nave</TraderShipsDispatchKindCount>
+  <TraderShipsDispatchNoKindsRow>Sin naves</TraderShipsDispatchNoKindsRow>
+  <TraderShipsDispatchHostileRow>Hostil</TraderShipsDispatchHostileRow>
+  <TraderShipsDispatchNoFactions>No hay facciones contactables.</TraderShipsDispatchNoFactions>
+
+<TraderShipsDispatchPickFaction>Selecciona una facción a la izquierda.</TraderShipsDispatchPickFaction>
+
+<TraderShipsDispatchHailShort>Llamar</TraderShipsDispatchHailShort>
+  <TraderShipsDispatchBuyShort>Comprar</TraderShipsDispatchBuyShort>
+  <TraderShipsDispatchCash>efectivo {RANGE}</TraderShipsDispatchCash>
+
+<TraderShipsAutoKindShort_Medical>Medicinas y drogas</TraderShipsAutoKindShort_Medical>
+  <TraderShipsAutoKindShort_Weapon>Armas</TraderShipsAutoKindShort_Weapon>
+  <TraderShipsAutoKindShort_Apparel>Ropa y armaduras</TraderShipsAutoKindShort_Apparel>
+  <TraderShipsAutoKindShort_Slave>Esclavos en venta</TraderShipsAutoKindShort_Slave>
+  <TraderShipsDispatchTooltipStock>Lleva:</TraderShipsDispatchTooltipStock>
+
+<TraderShipsDispatchUseLabel>Usar el terminal comercial</TraderShipsDispatchUseLabel>
+
+<TraderShipsAutoKind_General>Nave de mercancías de {0}</TraderShipsAutoKind_General>
+  <TraderShipsAutoKindDesc_General>Una nave comercial enviada por {0}, cargada con sus productos locales.</TraderShipsAutoKindDesc_General>
+  <TraderShipsAutoKindShort_General>Productos locales</TraderShipsAutoKindShort_General>
+
+  <TraderShipsAutoKind_Food>{0}食物船</TraderShipsAutoKind_Food>
+  <TraderShipsAutoKindDesc_Food>由{0}派遣的飛船，裝的是成品餐、飲品與調味料。</TraderShipsAutoKindDesc_Food>
+  <TraderShipsAutoKindShort_Food>成品餐與飲品</TraderShipsAutoKindShort_Food>
+  <TraderShipsAutoKind_Resource>{0}物資船</TraderShipsAutoKind_Resource>
+  <TraderShipsAutoKindDesc_Resource>由{0}派遣的飛船，裝的是金屬、皮革、布料這類原材料。</TraderShipsAutoKindDesc_Resource>
+  <TraderShipsAutoKindShort_Resource>原材料與礦產</TraderShipsAutoKindShort_Resource>
+  <TraderShipsAutoKind_Industrial>{0}工業船</TraderShipsAutoKind_Industrial>
+  <TraderShipsAutoKindDesc_Industrial>由{0}派遣的飛船，裝的是零件、燃料與化工品。</TraderShipsAutoKindDesc_Industrial>
+  <TraderShipsAutoKindShort_Industrial>零件與工業品</TraderShipsAutoKindShort_Industrial>
+  <TraderShipsAutoKind_Furniture>{0}家具船</TraderShipsAutoKind_Furniture>
+  <TraderShipsAutoKindDesc_Furniture>由{0}派遣的飛船，裝的是能搬走的家具與建材。</TraderShipsAutoKindDesc_Furniture>
+  <TraderShipsAutoKindShort_Furniture>家具與建材</TraderShipsAutoKindShort_Furniture>
+  <TraderShipsAutoKind_Exotic>{0}珍寶船</TraderShipsAutoKind_Exotic>
+  <TraderShipsAutoKindDesc_Exotic>由{0}派遣的飛船，裝的是神器、遺物與超科技小件。</TraderShipsAutoKindDesc_Exotic>
+  <TraderShipsAutoKindShort_Exotic>神器與奇珍</TraderShipsAutoKindShort_Exotic>
+
+  <TraderShipsAutoKind_Talent>{0} barco de talentos</TraderShipsAutoKind_Talent>
+  <TraderShipsAutoKindDesc_Talent>Un barco enviado por {0}, con gente muy cualificada.</TraderShipsAutoKindDesc_Talent>
+  <TraderShipsAutoKindShort_Talent>Gente cualificada</TraderShipsAutoKindShort_Talent>
+
+  <TraderShipsGoodwillLostLabel>Indemnización rechazada</TraderShipsGoodwillLostLabel>
+  <TraderShipsGoodwillLost>Rechazaste indemnizar el barco dañado. La relación con {FACTION} empeoró {DELTA}.</TraderShipsGoodwillLost>
+  <TraderShipsGoodwillAlreadyLow>Rechazaste indemnizar el barco dañado. La relación con {FACTION} ya no puede ser peor.</TraderShipsGoodwillAlreadyLow>
+
+  <TraderShipsShipNotEnoughSilver>No hay suficiente plata (se necesitan {COST}).</TraderShipsShipNotEnoughSilver>
+  <TraderShipsRequestShipUnderpaid>Solo se cubrieron {PAID} de {COST} de plata del flete; la diferencia se dio por perdida.</TraderShipsRequestShipUnderpaid>
+  <TraderShipsBuyShipFailed>No se pudo crear el barco. Se te ha reembolsado todo.</TraderShipsBuyShipFailed>
 </LanguageData>

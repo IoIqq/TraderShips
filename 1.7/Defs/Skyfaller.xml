@@ -141,4 +141,87 @@
     </skyfaller>
   </ThingDef>
 
+  <!--
+    玩家穿梭机专用的起降动画。thingClass 必须是 FlyShipLeaving / ShuttleIncoming 体系：
+    原版起飞时会把坠落物强制转换成 FlyShipLeaving，用 SkyfallerTradeShip 会抛异常。
+    这两个类会自己取船体的 CompShip 把随机拼装画出来，因此不需要单独准备整船贴图。
+  -->
+  <ThingDef ParentName="TraderShipSkyfaller">
+    <defName>TraderShipsPlayerShipLeaving</defName>
+    <label>trade ship (leaving)</label>
+    <thingClass>TraderShips.SkyfallerTradeShipShuttleLeaving</thingClass>
+    <skyfaller>
+      <movementType>Accelerate</movementType>
+      <reversed>true</reversed>
+      <anticipationSound>TraderShipsSoundTakeoff</anticipationSound>
+      <anticipationSoundTicks>-10</anticipationSoundTicks>
+      <ticksToImpactRange>-40~-15</ticksToImpactRange>
+      <moteSpawnTime>0.05</moteSpawnTime>
+      <angleCurve>
+        <points>
+          <li>(0,30)</li>
+          <li>(0.8,90)</li>
+          <li>(1,70)</li>
+        </points>
+      </angleCurve>
+      <rotationCurve>
+        <points>
+          <li>(0,0)</li>
+          <li>(0.15,10)</li>
+          <li>(0.5,-5)</li>
+        </points>
+      </rotationCurve>
+      <zPositionCurve>
+        <points>
+          <li>(0,0)</li>
+          <li>(0.08,2)</li>
+        </points>
+      </zPositionCurve>
+      <speedCurve>
+        <points>
+          <li>(0,0.2)</li>
+          <li>(0.4,0.7)</li>
+        </points>
+      </speedCurve>
+    </skyfaller>
+  </ThingDef>
+
+  <ThingDef ParentName="TraderShipSkyfaller">
+    <defName>TraderShipsPlayerShipIncoming</defName>
+    <label>trade ship (incoming)</label>
+    <thingClass>TraderShips.SkyfallerTradeShipShuttleIncoming</thingClass>
+    <skyfaller>
+      <anticipationSound>TraderShipsSoundLanding</anticipationSound>
+      <anticipationSoundTicks>160</anticipationSoundTicks>
+      <ticksToImpactRange>160</ticksToImpactRange>
+      <angleCurve>
+        <points>
+          <li>(0,-20)</li>
+          <li>(0.8,-40)</li>
+          <li>(1,0)</li>
+        </points>
+      </angleCurve>
+      <rotationCurve>
+        <points>
+          <li>(0,30)</li>
+          <li>(0.5,5)</li>
+          <li>(0.9,-5)</li>
+          <li>(0.95,0)</li>
+        </points>
+      </rotationCurve>
+      <zPositionCurve>
+        <points>
+          <li>(0.95,2.5)</li>
+          <li>(1,0)</li>
+        </points>
+      </zPositionCurve>
+      <speedCurve>
+        <points>
+          <li>(0.6,0.6)</li>
+          <li>(0.95,0.1)</li>
+        </points>
+      </speedCurve>
+    </skyfaller>
+  </ThingDef>
+
 </Defs>
