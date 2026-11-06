@@ -29,3 +29,7 @@ __pycache__/
 # editor / manual backups
 About/*.legacy-backup
 *.bak
+
+# temp commit message files
+.git-msg.txt
+.msg.tmp
