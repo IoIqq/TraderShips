@@ -18,11 +18,11 @@ DESC_SRC = REPO / "workshop-description.txt"
 APPID = "294100"            # RimWorld
 TITLE = "Trader Ships (Continued)"
 VISIBILITY = "0"            # 0 public / 1 friends / 2 private
-CHANGENOTE = ("1.8.0 - Trade desk building, auto-generated faction fleets (9 themed ship types "
-              "per faction), talent and slave ships, ship chartering with silver, compensation "
-              "demands only when your own colonists or turrets cause the damage, full cargo drop "
-              "when a ship is destroyed, factionless stowaways, 40-80 item kinds per ship using "
-              "vanilla categories and trade tags.")
+CHANGENOTE = ("1.8.1 - Goods ordering from the trade desk (pay a 10% deposit, the ship arrives in "
+              "3 days with your cargo), buildings that run their own Tick or carry ticking comps are "
+              "no longer traded, random arrivals no longer repeat the same faction back to back, and "
+              "a failed landing no longer charges you for a ship that never arrived. Also fixes a "
+              "reflection bug that could silently downgrade every faction to vanilla traders.")
 
 published_id = sys.argv[1] if len(sys.argv) > 1 else "0"
 

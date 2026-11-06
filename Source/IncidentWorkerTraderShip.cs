@@ -118,16 +118,70 @@ namespace TraderShips
             TraderKindDef traderKindDef = forcedKind;
             if (traderKindDef == null)
             {
-                traderKindDef = (from x in DefDatabase<TraderKindDef>.AllDefs where CanSpawn(map, x) select x).RandomElementByWeightWithFallback((TraderKindDef traderDef) => traderDef.CalculatedCommonality);
+                traderKindDef = PickRandomKind(map);
             }
-            if (traderKindDef == null) throw new InvalidOperationException();
+
+            // 以前这里直接 throw，一个没选中的随机事件会把整条事件链打断。
+            // 现在返回 null，交给调用方决定是跳过还是重试。
+            if (traderKindDef == null) return null;
 
             CompShip comp = ship.TryGetComp<CompShip>();
             comp.GenerateInternalTradeShip(map, traderKindDef, forcedFaction);
             return ship;
         }
 
-        public static void LandShip(Map map, Thing ship)
+        /// <summary>
+        /// 上一艘随机来船的派系定义，用来避免同一个派系连着来。
+        ///
+        /// 存 FactionDef 而不是 Faction 实例：这个字段不随存档保存，
+        /// 跨读档后 Faction 实例会变成野引用（旧存档的 Faction 对象可能已被替换）。
+        /// </summary>
+        private static FactionDef lastRandomFactionDef;
+
+        /// <summary>
+        /// 随机挑一条能派船的船型。
+        ///
+        /// 两个改进：
+        ///   1. 排除上一艘随机船的派系 —— 54 个派系随机抽，连着两次撞同一个
+        ///      的概率本来就有 1/54，但玩家体感上"怎么又是这家"特别刺眼。
+        ///   2. 排除完如果一条都不剩，退回完整候选集，而不是抛异常。
+        /// </summary>
+        private static TraderKindDef PickRandomKind(Map map)
+        {
+            List<TraderKindDef> all = new List<TraderKindDef>();
+            List<TraderKindDef> noRepeat = new List<TraderKindDef>();
+
+            foreach (TraderKindDef def in DefDatabase<TraderKindDef>.AllDefs)
+            {
+                if (!CanSpawn(map, def)) continue;
+
+                all.Add(def);
+
+                if (lastRandomFactionDef == null || def.faction != lastRandomFactionDef)
+                {
+                    noRepeat.Add(def);
+                }
+            }
+
+            List<TraderKindDef> pool = noRepeat.Count > 0 ? noRepeat : all;
+            if (pool.Count == 0) return null;
+
+            TraderKindDef picked = pool.RandomElementByWeightWithFallback(
+                (TraderKindDef d) => d.CalculatedCommonality);
+
+            if (picked != null)
+            {
+                lastRandomFactionDef = picked.faction;
+            }
+
+            return picked;
+        }
+
+        /// <summary>
+        /// 让船降落。返回 false 表示没落下来（找不到落点、坠落物放不下），
+        /// 调用方必须据此判定失败 —— 否则会出现"扣了钱、提示已抵达，玩家却看不到船"。
+        /// </summary>
+        public static bool LandShip(Map map, Thing ship)
         {
             Thing blockingThing;
             IntVec3 center = IntVec3.Invalid;
@@ -149,7 +203,20 @@ namespace TraderShips
                 FindCloseLandingSpot(out center, comp.tradeShip.Faction, map, ship.def.size);
             }
 
-            GenPlace.TryPlaceThing(SkyfallerMaker.MakeSkyfaller(comp.Props.landAnimation, ship), center, map, ThingPlaceMode.Near);
+            Thing faller = SkyfallerMaker.MakeSkyfaller(comp.Props.landAnimation, ship);
+            if (!GenPlace.TryPlaceThing(faller, center, map, ThingPlaceMode.Near))
+            {
+                // 放不下就不要再让船"算到达"——否则会扣钱、会占停靠上限，玩家却看不到船。
+                Log.Warning("[TraderShips] Could not place landing skyfaller at " + center);
+                if (ship.Spawned) ship.DeSpawn();
+                ship.Destroy(DestroyMode.Vanish);
+
+                // 坠落物没落地就成了孤儿，它内部还持有 ship —— 一并销毁，别留悬空容器。
+                if (!faller.Destroyed) faller.Destroy(DestroyMode.Vanish);
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>通讯台里玩家选定的船型；只在一次 TryExecuteWorkerPub 内有效。</summary>
@@ -167,7 +234,11 @@ namespace TraderShips
             // 呼叫飞船时 parms.faction 是玩家指定的派系；用它兜底，保证叫来的船确实属于该派系。
             Thing ship = MakeTraderShip(map, parms.faction, forcedKindForNextCall);
 
-            LandShip(map, ship);
+            // 没有可派的船型（或生成失败）——当作事件没发生，不要抛异常打断整条链。
+            if (ship == null) return false;
+
+            // 没落下来就当这次事件没发生：不更新节奏窗口，也不让调用方误以为成功。
+            if (!LandShip(map, ship)) return false;
 
             // Restart the pacing window. Paid comms requests also go through here, which is
             // intentional: chartering a ship should also stop a free one from arriving right after.

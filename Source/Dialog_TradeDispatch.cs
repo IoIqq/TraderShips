@@ -43,6 +43,22 @@ namespace TraderShips
         private readonly Dictionary<TraderKindDef, IntRange> cashCache
             = new Dictionary<TraderKindDef, IntRange>();
 
+        /// <summary>
+        /// 悬停提示缓存。
+        ///
+        /// FullKindTooltip 每次要新建 StringBuilder + List，再对最多 8 件货各取一次
+        /// LabelCap（TaggedString → Translate → StripTags）。鼠标停在行上时是每帧一次，
+        /// 而船型的货单在运行期不会变，缓存一次就够。
+        /// </summary>
+        private readonly Dictionary<TraderKindDef, string> tooltipCache
+            = new Dictionary<TraderKindDef, string>();
+
+        /// <summary>卖家与自有飞船状态：一帧内只查一次（两者都要遍历全图）。</summary>
+        private int sellerFrame = -1;
+        private Thing cachedSeller;
+        private int ownerShipFrame = -1;
+        private bool cachedOwnerShip;
+
         private const float LeftWidth = 260f;
         private const float RowHeight = 38f;
         private const float Pad = 8f;
@@ -168,6 +184,35 @@ namespace TraderShips
             return total;
         }
 
+        /// <summary>
+        /// 卖家飞船：一帧查一次。
+        /// FindSeller 要 listerThings.ThingsOfDef + 逐个 TryGetComp，而它和
+        /// "玩家是否已有飞船"都在每帧的停靠行里被调用。
+        /// </summary>
+        private Thing CachedSeller()
+        {
+            int frame = Time.frameCount;
+            if (sellerFrame != frame)
+            {
+                sellerFrame = frame;
+                cachedSeller = ShipPurchase.FindSeller(negotiator.Map, selected);
+            }
+
+            return cachedSeller;
+        }
+
+        private bool CachedOwnerShipExists()
+        {
+            int frame = Time.frameCount;
+            if (ownerShipFrame != frame)
+            {
+                ownerShipFrame = frame;
+                cachedOwnerShip = ShipPurchase.OwnerShipExists();
+            }
+
+            return cachedOwnerShip;
+        }
+
         /// <summary>全图可用银两，窗口内只算一次。</summary>
         private int CachedSilver()
         {
@@ -205,6 +250,15 @@ namespace TraderShips
             return cached;
         }
 
+        /// <summary>
+        /// 子窗口（预订货物）扣过定金之后要通知主窗 —— 否则底部的"可用银两"
+        /// 会停在扣款前的旧值，一直到关窗为止。
+        /// </summary>
+        internal void InvalidateSilverCache()
+        {
+            silverCache = -1;
+        }
+
         /// <summary>窗口关闭时清空，下次打开重新算。</summary>
         public override void PreClose()
         {
@@ -212,6 +266,7 @@ namespace TraderShips
             silverCache = -1;
             kindsCache.Clear();
             cashCache.Clear();
+            tooltipCache.Clear();
         }
 
         // ── 绘制 ───────────────────────────────────────────────────────────
@@ -302,6 +357,7 @@ namespace TraderShips
             {
                 selected = faction;
                 kindScroll = Vector2.zero;
+                sellerFrame = -1;
             }
 
             Rect iconRect = new Rect(rect.x + 6f, rect.y + 6f, 26f, 26f);
@@ -402,10 +458,26 @@ namespace TraderShips
         private void DrawPurchaseRow(Rect rect)
         {
             int price = CommsShipRequest.PriceFor(selected, ShipPurchase.DefaultPrice);
-            Thing seller = ShipPurchase.FindSeller(negotiator.Map, selected);
+            Thing seller = CachedSeller();
             int silver = CachedSilver();
 
             if (Mouse.IsOver(rect)) Widgets.DrawHighlight(rect);
+
+            // 预订入口和"买船"挤在同一行。
+            //
+            // 它是独立按钮而不是挂在某条船型上：预订针对的是"该派系的某件货"，
+            // 与买船、叫船是三条互不相干的路径，塞进船型行里会让人以为是买那条船。
+            Rect orderRect = new Rect(rect.xMax - RightPad - 72f - 6f - 104f, rect.y + 7f, 104f, 30f);
+
+            // 该派系一条船都派不出来时里面必然是空列表，不如直接灰掉按钮。
+            if (CachedKinds(selected).Count == 0)
+            {
+                Widgets.ButtonText(orderRect, "TraderShipsOrderButton".Translate(), false, false, Color.gray);
+            }
+            else if (Widgets.ButtonText(orderRect, "TraderShipsOrderButton".Translate()))
+            {
+                Find.WindowStack.Add(new Dialog_OrderGoods(negotiator, selected, this));
+            }
 
             Widgets.Label(new Rect(rect.x + 6f, rect.y + 3f, rect.width - 200f, 20f),
                 "TraderShipsBuyShip".Translate(price.ToString().Named("PRICE")));
@@ -414,7 +486,7 @@ namespace TraderShips
             string reason = null;
             Color reasonColor = Color.gray;
 
-            if (ShipPurchase.OwnerShipExists())
+            if (CachedOwnerShipExists())
             {
                 reason = "TraderShipsBuyShipAlreadyOwn".Translate();
             }
@@ -509,7 +581,14 @@ namespace TraderShips
             // 列表里只放得下短句；完整说明（"由绮罗族派遣的贸易飞船……"）挂到悬停提示。
             if (Mouse.IsOver(rect))
             {
-                TooltipHandler.TipRegion(rect, new TipSignal(FullKindTooltip(kind), kind.shortHash));
+                string tip;
+            if (!tooltipCache.TryGetValue(kind, out tip))
+            {
+                tip = FullKindTooltip(kind);
+                tooltipCache[kind] = tip;
+            }
+
+            TooltipHandler.TipRegion(rect, new TipSignal(tip, kind.shortHash));
             }
             GUI.color = Color.white;
 

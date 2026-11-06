@@ -1,4 +1,4 @@
-﻿using RimWorld;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +20,25 @@ namespace TraderShips.Quest
             if(requester==null && Find.CurrentMap!=null)
                 requester = IncidentWorkerTraderShip.MakeTraderShip(Find.CurrentMap);
 
+            // 派系都派不出船时 requester 仍然是 null —— 此时整个贸易请求没有意义。
+            if (requester == null)
+            {
+                Log.Warning("[TraderShips] trade request had no ship to spawn; dropping it.");
+                return;
+            }
+
             CompShip comp = requester.TryGetComp<CompShip>();
             if (comp != null) comp.tradeRequest = this;
 
-            IncidentWorkerTraderShip.LandShip(map, requester);
+            if (!IncidentWorkerTraderShip.LandShip(map, requester))
+            {
+                // 船落不下来，这个贸易请求永远等不到完成信号。
+                // 不主动结束任务的话，它会一直挂在任务栏里且 Cleanup 也清不掉。
+                Log.Warning("[TraderShips] trade request ship could not land; failing the quest part.");
+                quest.End(QuestEndOutcome.Fail);
+                requester = null;
+                return;
+            }
 
             requester = null;
         }
@@ -42,6 +57,7 @@ namespace TraderShips.Quest
         {
             base.AssignDebugData();
             inSignal = "DebugSignal" + Rand.Int;
+            // 调试数据：造不出船就留空，AssignDebugData 允许 requester 为 null。
             requester = IncidentWorkerTraderShip.MakeTraderShip(Find.CurrentMap);
             requestedThingDef = ThingDefOf.Silver;
             requestedCount = 100;

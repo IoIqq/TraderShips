@@ -467,27 +467,52 @@ namespace TraderShips
         ///
         /// 只用于"钱已经扣了但事情没办成"的补偿路径。
         /// </summary>
-        internal static void RefundSilverTo(Map map, int amount)
+        internal static bool RefundSilverTo(Map map, int amount)
         {
-            if (map == null || amount <= 0) return;
+            if (map == null) return false;
+            if (amount <= 0) return true;
+
+            // 落点选殖民地附近，不是地图中心 —— 退的钱应该出现在玩家看得到的地方。
+            IntVec3 spot = map.Center;
+            if (Find.AnyPlayerHomeMap == map)
+            {
+                IntVec3 near;
+                if (DropCellFinder.TryFindDropSpotNear(map.Center, map, out near, false, false, false))
+                {
+                    spot = near;
+                }
+            }
 
             int remaining = amount;
+            bool allPlaced = true;
+
             while (remaining > 0)
             {
                 int chunk = Mathf.Min(remaining, 500);
                 Thing silver = ThingMaker.MakeThing(ThingDefOf.Silver);
                 silver.stackCount = chunk;
 
-                if (!GenPlace.TryPlaceThing(silver, map.Center, map, ThingPlaceMode.Near))
+                bool placed = GenPlace.TryPlaceThing(silver, spot, map, ThingPlaceMode.Near);
+
+                // 放不下就强制掉在地上，绝不 Destroy —— 那是玩家的钱。
+                if (!placed)
                 {
-                    silver.Destroy(DestroyMode.Vanish);
-                    Log.Warning("[TraderShips] Could not refund " + chunk + " silver - no space.");
+                    GenDrop.TryDropSpawn(silver, spot, map, ThingPlaceMode.Near, out Thing _);
+                    placed = silver.Spawned;
+                }
+
+                if (!placed)
+                {
+                    Log.Error("[TraderShips] Could not refund " + chunk + " silver - no space at all.");
+                    allPlaced = false;
+                    if (!silver.Destroyed) silver.Destroy(DestroyMode.Vanish);
                 }
 
                 remaining -= chunk;
             }
 
             map.resourceCounter?.UpdateResourceCounts();
+            return allPlaced;
         }
 
         /// <summary>扣银，返回实际扣掉的数量（= cost - 剩余未扣足部分）。</summary>

@@ -175,4 +175,24 @@
   <TraderShipsShipNotEnoughSilver>Not enough silver (need {COST}).</TraderShipsShipNotEnoughSilver>
   <TraderShipsRequestShipUnderpaid>The charter fee was only covered for {PAID} of {COST} silver; the shortfall was written off.</TraderShipsRequestShipUnderpaid>
   <TraderShipsBuyShipFailed>The ship could not be created. You have been fully refunded.</TraderShipsBuyShipFailed>
+
+  <!-- 预订货物 / goods orders -->
+  <TraderShipsOrderButton>Order goods…</TraderShipsOrderButton>
+  <TraderShipsOrderTitle>Order goods — {FACTION}</TraderShipsOrderTitle>
+  <TraderShipsOrderEmpty>This faction has nothing you can order right now.</TraderShipsOrderEmpty>
+  <TraderShipsOrderColumnGoods>Goods</TraderShipsOrderColumnGoods>
+  <TraderShipsOrderColumnPrice>Unit price</TraderShipsOrderColumnPrice>
+  <TraderShipsOrderColumnCount>Amount</TraderShipsOrderColumnCount>
+  <TraderShipsOrderColumnSubtotal>Subtotal</TraderShipsOrderColumnSubtotal>
+  <TraderShipsOrderTotal>Total: {TOTAL} silver</TraderShipsOrderTotal>
+  <TraderShipsOrderDeposit>Deposit: {DEPOSIT} silver (10% of the total, at least 100)</TraderShipsOrderDeposit>
+  <TraderShipsOrderSilver>You can pay: {SILVER} silver</TraderShipsOrderSilver>
+  <TraderShipsOrderConfirm>Confirm order</TraderShipsOrderConfirm>
+  <TraderShipsOrderNothingSelected>No goods selected yet.</TraderShipsOrderNothingSelected>
+  <TraderShipsOrderNotEnoughDeposit>Not enough silver for the {DEPOSIT} silver deposit.</TraderShipsOrderNotEnoughDeposit>
+  <TraderShipsOrderDepositShort>The deposit could only be covered for {PAID} of {COST} silver, so the order was rejected and the silver returned.</TraderShipsOrderDepositShort>
+  <TraderShipsOrderPlaced>Order placed. Expected to arrive in {DAYS} days.</TraderShipsOrderPlaced>
+  <TraderShipsOrderArrived>Your order has landed: {THING} x{COUNT} from {FACTION}.</TraderShipsOrderArrived>
+  <TraderShipsOrderFailed>The order could not be fulfilled. The {DEPOSIT} silver deposit has been refunded.</TraderShipsOrderFailed>
+  <TraderShipsOrderFailedRefund>The order could not be created; the {DEPOSIT} silver deposit has been refunded in full.</TraderShipsOrderFailedRefund>
 </LanguageData>

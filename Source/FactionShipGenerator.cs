@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Linq;
 using RimWorld;
 using UnityEngine;
@@ -314,7 +315,96 @@ namespace TraderShips
             // 派系自己都不卖的东西（例如脚本生成的自定义占位）不放进货池。
             if (thing.modContentPack == null) return false;
 
+            // 会自己 Tick 的建筑一律不卖。
+            //
+            // 教训：人船的随机杂货里抽到过 VFEMedieval 的蜂房（Minifiable 建筑），
+            // 飞船被击毁后它落到地上开始 Tick，那个模组的
+            // Building_Apiary.FlowerAround() 在"从贸易库存直接落地"这种情况下
+            // 会空引用，玩家看到的是每 tick 刷满屏红字。
+            //
+            // 判断依据是"这个 thingClass 自己声明了 Tick 系列方法"——
+            // 原版家具（床、桌子、雕塑）都不声明，只有带行为的建筑才会，
+            // 所以普通家具仍然能卖，只有真正有副作用的被挡掉。
+            if (thing.category == ThingCategory.Building && HasOwnTick(thing))
+            {
+                if (Prefs.DevMode)
+                {
+                    Log.Message("[TraderShips] skipped ticking building: " + thing.defName
+                        + " (" + thing.thingClass?.FullName + ")");
+                }
+
+                return false;
+            }
+
             return true;
+        }
+
+        /// <summary>临时缓存：一个 thingClass 是否自己声明了 Tick / TickRare / TickLong。</summary>
+        private static readonly Dictionary<Type, bool> ownTickCache = new Dictionary<Type, bool>();
+
+        /// <summary>
+        /// 该类是否自己声明了无参的某个 Tick 方法。
+        ///
+        /// 用 GetMethod(name, flags, null, Type.EmptyTypes, null) 而不是
+        /// GetMethod(name, flags)：后者在同名重载时抛 AmbiguousMatchException。
+        /// </summary>
+        private static bool DeclaresNoArgTick(Type type, string name, BindingFlags flags)
+        {
+            try
+            {
+                return type.GetMethod(name, flags, null, Type.EmptyTypes, null) != null;
+            }
+            catch (AmbiguousMatchException)
+            {
+                // 理论上不会走到（已指定参数类型），但兜一下总比让整个生成流程中止好。
+                return true;
+            }
+        }
+
+        private static bool HasOwnTick(ThingDef thing)
+        {
+            Type type = thing.thingClass;
+            if (type == null) return false;
+
+            bool cached;
+            if (ownTickCache.TryGetValue(type, out cached)) return cached;
+
+            const BindingFlags flags = BindingFlags.Instance
+                | BindingFlags.Public
+                | BindingFlags.NonPublic
+                | BindingFlags.DeclaredOnly;
+
+            // DeclaredOnly 是关键：继承自 Building 的默认空实现不算，
+            // 只有模组自己写了行为才会命中。
+            //
+            // 必须用带参数类型的重载解析：一个类同时有 Tick() 和 Tick(int) 时，
+            // GetMethod("Tick", flags) 会抛 AmbiguousMatchException，
+            // 而它会被 Generate 的 catch 吞掉 —— 结果整个主题船生成中止、
+            // 所有派系退化成原版轨道船型。这种静默退化极难排查。
+            cached = DeclaresNoArgTick(type, "Tick", flags)
+                || DeclaresNoArgTick(type, "TickRare", flags)
+                || DeclaresNoArgTick(type, "TickLong", flags);
+
+            // 建筑自己没写 Tick，但挂的 ThingComp 可能写了：
+            // ThingWithComps.Tick 会遍历 comps 调 CompTick，蜂房那类崩溃同样会复现。
+            if (!cached && thing.comps != null)
+            {
+                foreach (CompProperties comp in thing.comps)
+                {
+                    if (comp == null || comp.compClass == null) continue;
+
+                    if (DeclaresNoArgTick(comp.compClass, "CompTick", flags)
+                        || DeclaresNoArgTick(comp.compClass, "CompTickRare", flags)
+                        || DeclaresNoArgTick(comp.compClass, "CompTickLong", flags))
+                    {
+                        cached = true;
+                        break;
+                    }
+                }
+            }
+
+            ownTickCache[type] = cached;
+            return cached;
         }
 
         /// <summary>
@@ -323,7 +413,7 @@ namespace TraderShips
         /// 顺序有意义：先判武器/服装（最具体的虚拟属性），再判大类分类，
         /// 最后落到杂货。每件物品只认一个主题。
         /// </summary>
-        private static ShipTheme ThemeOf(ThingDef thing)
+        public static ShipTheme ThemeOf(ThingDef thing)
         {
             // 记忆化：同一件物品会被多个派系反复分类，杂货补位那一步还要再判一次。
             // 分类本身要沿 thingCategories 上溯匹配关键字，是整个生成流程的热点。

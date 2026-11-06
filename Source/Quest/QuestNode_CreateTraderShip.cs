@@ -1,4 +1,4 @@
-﻿using RimWorld.QuestGen;
+using RimWorld.QuestGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +26,11 @@ namespace TraderShips.Quest
             Map map = QuestGen.slate.Get<Map>("map");
 
             Thing ship = IncidentWorkerTraderShip.MakeTraderShip(map);
+
+            // 没有任何派系能派船时 MakeTraderShip 会返回 null（以前是抛异常）。
+            // 这里静默跳过：把 null 写进 slate 会让后续节点读到空引用。
+            if (ship == null) return;
+
             QuestGen.slate.Set(storeAs.GetValue(slate), ship, false);
             QuestGen.slate.Set(storeAs.GetValue(slate) + "_label", ship.LabelCap, false);
         }

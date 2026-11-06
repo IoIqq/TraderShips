@@ -170,4 +170,24 @@
   <TraderShipsShipNotEnoughSilver>銀兩不足（需要 {COST} 銀）。</TraderShipsShipNotEnoughSilver>
   <TraderShipsRequestShipUnderpaid>包船費只付清了 {PAID} / {COST} 銀，差額已按欠款處理。</TraderShipsRequestShipUnderpaid>
   <TraderShipsBuyShipFailed>飛船生成失敗，已全額退款。</TraderShipsBuyShipFailed>
+
+  <!-- 預訂貨物 -->
+  <TraderShipsOrderButton>預訂貨物…</TraderShipsOrderButton>
+  <TraderShipsOrderTitle>預訂貨物 — {FACTION}</TraderShipsOrderTitle>
+  <TraderShipsOrderEmpty>這個派系目前沒有可預訂的貨物。</TraderShipsOrderEmpty>
+  <TraderShipsOrderColumnGoods>貨物</TraderShipsOrderColumnGoods>
+  <TraderShipsOrderColumnPrice>單價</TraderShipsOrderColumnPrice>
+  <TraderShipsOrderColumnCount>數量</TraderShipsOrderColumnCount>
+  <TraderShipsOrderColumnSubtotal>小計</TraderShipsOrderColumnSubtotal>
+  <TraderShipsOrderTotal>總價：{TOTAL} 銀</TraderShipsOrderTotal>
+  <TraderShipsOrderDeposit>定金：{DEPOSIT} 銀（總價的 10%，最低 100）</TraderShipsOrderDeposit>
+  <TraderShipsOrderSilver>你目前可付：{SILVER} 銀</TraderShipsOrderSilver>
+  <TraderShipsOrderConfirm>確認預訂</TraderShipsOrderConfirm>
+  <TraderShipsOrderNothingSelected>還沒有選擇任何貨物。</TraderShipsOrderNothingSelected>
+  <TraderShipsOrderNotEnoughDeposit>銀兩不足，定金需要 {DEPOSIT} 銀。</TraderShipsOrderNotEnoughDeposit>
+  <TraderShipsOrderDepositShort>定金只扣到 {PAID} / {COST} 銀，訂單未成立，已扣部分已退回。</TraderShipsOrderDepositShort>
+  <TraderShipsOrderPlaced>預訂成功，預計 {DAYS} 天後到達。</TraderShipsOrderPlaced>
+  <TraderShipsOrderArrived>預訂的貨物到了：{FACTION} 送來了 {THING} ×{COUNT}。</TraderShipsOrderArrived>
+  <TraderShipsOrderFailed>這筆訂單無法履約，已退還定金 {DEPOSIT} 銀。</TraderShipsOrderFailed>
+  <TraderShipsOrderFailedRefund>訂單建立失敗，定金 {DEPOSIT} 銀已全額退回。</TraderShipsOrderFailedRefund>
 </LanguageData>

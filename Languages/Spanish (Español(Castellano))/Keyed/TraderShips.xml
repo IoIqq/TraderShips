@@ -168,4 +168,24 @@
   <TraderShipsShipNotEnoughSilver>No hay suficiente plata (se necesitan {COST}).</TraderShipsShipNotEnoughSilver>
   <TraderShipsRequestShipUnderpaid>Solo se cubrieron {PAID} de {COST} de plata del flete; la diferencia se dio por perdida.</TraderShipsRequestShipUnderpaid>
   <TraderShipsBuyShipFailed>No se pudo crear el barco. Se te ha reembolsado todo.</TraderShipsBuyShipFailed>
+
+  <!-- pedidos de mercancía -->
+  <TraderShipsOrderButton>Pedir mercancía…</TraderShipsOrderButton>
+  <TraderShipsOrderTitle>Pedir mercancía — {FACTION}</TraderShipsOrderTitle>
+  <TraderShipsOrderEmpty>Esta facción no tiene nada que puedas pedir ahora mismo.</TraderShipsOrderEmpty>
+  <TraderShipsOrderColumnGoods>Mercancía</TraderShipsOrderColumnGoods>
+  <TraderShipsOrderColumnPrice>Precio unitario</TraderShipsOrderColumnPrice>
+  <TraderShipsOrderColumnCount>Cantidad</TraderShipsOrderColumnCount>
+  <TraderShipsOrderColumnSubtotal>Subtotal</TraderShipsOrderColumnSubtotal>
+  <TraderShipsOrderTotal>Total: {TOTAL} de plata</TraderShipsOrderTotal>
+  <TraderShipsOrderDeposit>Señal: {DEPOSIT} de plata (10% del total, mínimo 100)</TraderShipsOrderDeposit>
+  <TraderShipsOrderSilver>Puedes pagar: {SILVER} de plata</TraderShipsOrderSilver>
+  <TraderShipsOrderConfirm>Confirmar pedido</TraderShipsOrderConfirm>
+  <TraderShipsOrderNothingSelected>Todavía no has elegido mercancía.</TraderShipsOrderNothingSelected>
+  <TraderShipsOrderNotEnoughDeposit>No hay plata suficiente para la señal de {DEPOSIT}.</TraderShipsOrderNotEnoughDeposit>
+  <TraderShipsOrderDepositShort>La señal solo se cubrió hasta {PAID} de {COST} de plata, así que el pedido se rechazó y se devolvió la plata.</TraderShipsOrderDepositShort>
+  <TraderShipsOrderPlaced>Pedido realizado. Llegará en {DAYS} días.</TraderShipsOrderPlaced>
+  <TraderShipsOrderArrived>Tu pedido ha aterrizado: {THING} x{COUNT} de {FACTION}.</TraderShipsOrderArrived>
+  <TraderShipsOrderFailed>El pedido no se pudo cumplir. Se han devuelto {DEPOSIT} de plata de señal.</TraderShipsOrderFailed>
+  <TraderShipsOrderFailedRefund>No se pudo crear el pedido; el depósito de {DEPOSIT} de plata se ha reembolsado por completo.</TraderShipsOrderFailedRefund>
 </LanguageData>

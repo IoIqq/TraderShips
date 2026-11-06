@@ -1,4 +1,4 @@
-﻿using RimWorld;
+using RimWorld;
 using RimWorld.QuestGen;
 using System;
 using System.Collections.Generic;
@@ -27,6 +27,10 @@ namespace TraderShips.Quest
             part.map = slate.Get<Map>("map");
             part.requester = requester.GetValue(slate);
             if (part.requester == null) part.requester = IncidentWorkerTraderShip.MakeTraderShip(part.map);
+
+            // 造不出船就别注册这个 part，否则后续信号到达时是空引用。
+            if (part.requester == null) return;
+
             part.requestedThingDef = requestedThingDef.GetValue(slate);
             part.requestedCount = requestedThingCount.GetValue(slate);
             part.inSignal = slate.Get<string>("inSignal");
