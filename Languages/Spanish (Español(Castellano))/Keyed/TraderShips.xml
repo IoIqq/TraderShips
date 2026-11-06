@@ -188,4 +188,9 @@
   <TraderShipsOrderArrived>Tu pedido ha aterrizado: {THING} x{COUNT} de {FACTION}.</TraderShipsOrderArrived>
   <TraderShipsOrderFailed>El pedido no se pudo cumplir. Se han devuelto {DEPOSIT} de plata de señal.</TraderShipsOrderFailed>
   <TraderShipsOrderFailedRefund>No se pudo crear el pedido; el depósito de {DEPOSIT} de plata se ha reembolsado por completo.</TraderShipsOrderFailedRefund>
+  <TraderShipsDispatchStandalone>Mercantes independientes</TraderShipsDispatchStandalone>
+  <TraderShipsDispatchStandaloneDesc>Mercantes orbitales añadidos por otros mods</TraderShipsDispatchStandaloneDesc>
+  <TraderShipsDispatchStandaloneHint>No pertenece a ninguna facción, así que no hay descuento por reputación. La tarifa es el precio base.</TraderShipsDispatchStandaloneHint>
+  <TraderShipsDispatchStandaloneEmpty>No hay mercantes independientes disponibles.</TraderShipsDispatchStandaloneEmpty>
+  <TraderShipsDispatchStandaloneOwner>Nota: lo envía una facción no hostil al azar; ofenderlo cuenta contra ella.</TraderShipsDispatchStandaloneOwner>
 </LanguageData>

@@ -223,8 +223,17 @@ namespace TraderShips
             // 现在返回 null，交给调用方决定是跳过还是重试。
             if (traderKindDef == null) return null;
 
+            // 无派系的独立商船（例如其它模组定义的 orbital 商船）需要一个船东。
+            // 原版的轨道商船事件也是由 storyteller 指派 parms.faction 的，
+            // 不指派的话交易窗、抵达信件、敌对判定全都拿不到派系。
+            Faction owner = forcedFaction;
+            if (owner == null && traderKindDef.faction == null)
+            {
+                owner = Find.FactionManager.RandomNonHostileFaction(false, false, true);
+            }
+
             CompShip comp = ship.TryGetComp<CompShip>();
-            comp.GenerateInternalTradeShip(map, traderKindDef, forcedFaction);
+            comp.GenerateInternalTradeShip(map, traderKindDef, owner);
             return ship;
         }
 
@@ -264,10 +273,11 @@ namespace TraderShips
             List<TraderKindDef> pool = noRepeat.Count > 0 ? noRepeat : all;
             if (pool.Count == 0) return null;
 
-            TraderKindDef picked = pool.RandomElementByWeightWithFallback(
-                (TraderKindDef d) => d.CalculatedCommonality);
+            TraderKindDef picked = PickFairly(pool);
 
-            if (picked != null)
+            // 只在真的抽到"有派系"的船时才更新记忆；
+            // 独立商船的 faction 是 null，覆盖掉会让 X → 独立 → X 连续出现。
+            if (picked != null && picked.faction != null)
             {
                 lastRandomFactionDef = picked.faction;
             }
@@ -279,6 +289,130 @@ namespace TraderShips
         /// 让船降落。返回 false 表示没落下来（找不到落点、坠落物放不下），
         /// 调用方必须据此判定失败 —— 否则会出现"扣了钱、提示已抵达，玩家却看不到船"。
         /// </summary>
+        /// <summary>
+        /// 在候选里公平地抽一条。
+        ///
+        /// 直接按 def 数量加权是不行的：本模组会为每个派系生成约 10 条船型，
+        /// 40 多个派系就是 1500 条，而别的模组自带的"独立轨道商船"
+        /// （例如 Misc.Robots 的 AIRobotsTrader）只有 1 条、权重同为 1。
+        /// 结果就是那些商船被稀释到 1/1500，实际永远抽不到 —— 相当于我们
+        /// 接管轨道商船时把它们悄悄下架了。
+        ///
+        /// 改为三段分组、组间按 sqrt(数量) 加权（上限 6），组内仍按 commonality：
+        ///   本模组生成 / 无派系的独立商船 / 其余（原版与其它模组）
+        /// sqrt 的效果是"数量多的一组仍有优势，但不会把小组碾掉"。
+        /// </summary>
+        private static TraderKindDef PickFairly(List<TraderKindDef> pool)
+        {
+            List<TraderKindDef> ours = new List<TraderKindDef>();
+            List<TraderKindDef> standalone = new List<TraderKindDef>();
+            List<TraderKindDef> others = new List<TraderKindDef>();
+
+            foreach (TraderKindDef def in pool)
+            {
+                if (def == null) continue;
+
+                if (def.defName != null && def.defName.StartsWith("TraderShipsAuto_"))
+                {
+                    ours.Add(def);
+                }
+                else if (def.faction == null)
+                {
+                    standalone.Add(def);
+                }
+                else
+                {
+                    others.Add(def);
+                }
+            }
+
+            List<TraderKindDef> group = WeightedGroupPick(ours, standalone, others);
+            if (group == null || group.Count == 0) group = pool;
+
+            // commonality 可能是 0（隐藏用法的常见写法），总权重为 0 时
+            // RandomElementByWeightWithFallback 会返回 null，整次随机来船就静默没了。
+            // 兜底给一个极小的正权重，让"有候选"就一定能抽出一个。
+            return group.RandomElementByWeightWithFallback(
+                (TraderKindDef d) => UnityEngine.Mathf.Max(0.0001f, d.CalculatedCommonality));
+        }
+
+        private static List<TraderKindDef> WeightedGroupPick(
+            List<TraderKindDef> a, List<TraderKindDef> b, List<TraderKindDef> c)
+        {
+            float wa = GroupWeight(a);
+            float wb = GroupWeight(b);
+            float wc = GroupWeight(c);
+
+            float total = wa + wb + wc;
+            if (total <= 0f) return null;
+
+            float roll = Rand.Value * total;
+
+            if (roll < wa) return a;
+            roll -= wa;
+            if (roll < wb) return b;
+            return c;
+        }
+
+        /// <summary>组权重：sqrt(数量)，上限 6。空组权重为 0。</summary>
+        private static float GroupWeight(List<TraderKindDef> group)
+        {
+            if (group == null || group.Count == 0) return 0f;
+            return UnityEngine.Mathf.Clamp(UnityEngine.Mathf.Sqrt(group.Count), 1f, 6f);
+        }
+
+        /// <summary>Core 或官方 DLC 里的原版船型（不是"第三方独立商船"）。</summary>
+        private static bool IsCoreOrVanilla(TraderKindDef def)
+        {
+            ModContentPack pack = def.modContentPack;
+            if (pack == null) return true;
+
+            string name = pack.Name;
+            if (name.NullOrEmpty()) return true;
+
+            // Core / Royalty / Ideology / Biotech / Anomaly / Odyssey
+            // 官方包一律以 "Ludeon." 开头（含 Core 的 packageId ludeon.rimworld）。
+            if (name.StartsWith("Ludeon.")) return true;
+            if (pack.PackageId != null && pack.PackageId.StartsWith("ludeon.", System.StringComparison.OrdinalIgnoreCase)) return true;
+            if (def.defName != null && def.defName.StartsWith("Orbital_")) return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// 其它模组自带的独立轨道商船（没有 &lt;faction&gt; 的 orbital 船型）。
+        ///
+        /// 例如 Misc.Robots 的 AIRobotsTrader：它不属于任何派系，
+        /// 按派系查船型永远查不到，玩家在贸易台里也就永远叫不到。
+        /// </summary>
+        public static List<TraderKindDef> StandaloneKinds(Map map)
+        {
+            List<TraderKindDef> result = new List<TraderKindDef>();
+            if (map == null) return result;
+
+            foreach (TraderKindDef def in DefDatabase<TraderKindDef>.AllDefs)
+            {
+                if (def == null) continue;
+                if (def.faction != null) continue;
+                if (def.defName != null && def.defName.StartsWith("TraderShipsAuto_")) continue;
+
+                // 只收第三方模组加的独立商船。
+                //
+                // Core 的 4 条 Orbital_* 带的是
+                // <faction MayRequire="Ludeon.RimWorld.Odyssey">TradersGuild</faction>，
+                // 没装 Odyssey 时那个节点根本不加载，faction 变成 null，
+                // 它们就会冒充"独立商船"混进来。
+                if (IsCoreOrVanilla(def)) continue;
+
+                if (!CanSpawn(map, def)) continue;
+
+                result.Add(def);
+            }
+
+            result.Sort((a, b) => string.Compare(a.label, b.label, System.StringComparison.OrdinalIgnoreCase));
+            return result;
+        }
+
         public static bool LandShip(Map map, Thing ship)
         {
             Thing blockingThing;
@@ -367,28 +501,62 @@ namespace TraderShips
             return (from f in Find.FactionManager.AllFactions where f.def == trader.faction select f).RandomElementWithFallback();
         }
 
-        protected static bool CanSpawn(Map map, TraderKindDef trader)
+        /// <summary>
+        /// 本次调用内的 FactionDef → 是否可派船 缓存。
+        ///
+        /// CanSpawn 会在一次随机来船里被数千条 def 调用，而其中的
+        /// GetFaction（扫 AllFactions）和 map.mapPawns.FreeColonists
+        /// （每次都会重建整张图的 pawn 列表）与 def 无关，只和 FactionDef 有关。
+        /// 不缓存的话事件触发时会有一次几十毫秒的卡顿。
+        /// </summary>
+        private static Dictionary<FactionDef, Faction> factionLookup;
+        private static List<Pawn> colonistScratch;
+        private static int spawnCacheTick = -1;
+
+        /// <summary>
+        /// 每次随机来船会对着数千条 def 调 CanSpawn，其中两件事与 def 无关：
+        ///   1. FactionDef → 场上的 Faction 实例（要扫 AllFactions）
+        ///   2. 殖民者列表（mapPawns.FreeColonists 每次调用都会重建整张图的列表）
+        /// 只缓存这两样，具体的 CanTradeWith 仍按各自的 TraderKindDef 判定，
+        /// 免得把"某船型需要头衔"这类条件一起缓存掉。
+        /// </summary>
+        private static void EnsureSpawnCache(Map map)
         {
-            if (!trader.orbital)
+            int now = Find.TickManager.TicksGame;
+            if (spawnCacheTick == now && factionLookup != null && colonistScratch != null) return;
+
+            spawnCacheTick = now;
+            factionLookup = new Dictionary<FactionDef, Faction>();
+            colonistScratch = new List<Pawn>(map.mapPawns.FreeColonists);
+        }
+
+        public static bool CanSpawn(Map map, TraderKindDef trader)
+        {
+            if (trader == null) return false;
+            if (!trader.orbital) return false;
+            if (trader.faction == null) return true;
+            if (map == null) return false;
+
+            EnsureSpawnCache(map);
+
+            Faction faction;
+            if (!factionLookup.TryGetValue(trader.faction, out faction))
             {
-                return false;
-            }
-            if (trader.faction == null)
-            {
-                return true;
-            }
-            Faction faction = GetFaction(trader);
-            if (faction == null)
-            {
-                return false;
+                faction = null;
+                foreach (Faction f in Find.FactionManager.AllFactionsListForReading)
+                {
+                    if (f.def == trader.faction) { faction = f; break; }
+                }
+
+                factionLookup[trader.faction] = faction;
             }
 
-            foreach (Pawn pawn in map.mapPawns.FreeColonists)
+            if (faction == null) return false;
+
+            for (int i = 0; i < colonistScratch.Count; i++)
             {
-                if (pawn.CanTradeWith(faction, trader))
-                {
-                    return true;
-                }
+                Pawn pawn = colonistScratch[i];
+                if (pawn != null && !pawn.Dead && pawn.CanTradeWith(faction, trader)) return true;
             }
 
             return false;

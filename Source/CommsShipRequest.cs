@@ -580,6 +580,9 @@ namespace TraderShips
         /// 供贸易台界面直接下单用。返回 false 表示没叫成（已弹出原因），
         /// 调用方据此决定要不要关窗口。
         /// </summary>
+        /// <summary>独立商船（无派系）专用的冷却时间戳。</summary>
+        private static int lastStandaloneRequestTick = -999999;
+
         internal static bool RequestShipPublic(Map map, Faction faction, Pawn negotiator,
             TraderKindDef kind, int cost)
         {
@@ -625,7 +628,17 @@ namespace TraderShips
                         cost.ToString().Named("COST")),
                         MessageTypeDefOf.NegativeEvent);
                 }
-                faction.lastTraderRequestTick = Find.TickManager.TicksGame;
+                // 独立商船的 faction 是 null，冷却不能挂在派系上。
+                // 不加这个判断的话：船已落地、钱已扣，然后在 NRE 里被 catch 吞掉，
+                // 窗口不关、没有提示、也没记冷却 —— 再点一次又扣一次钱、再落一艘船。
+                if (faction != null)
+                {
+                    faction.lastTraderRequestTick = Find.TickManager.TicksGame;
+                }
+                else
+                {
+                    lastStandaloneRequestTick = Find.TickManager.TicksGame;
+                }
 
                 // The resource readout is driven by ResourceCounter, which refreshes on its own
                 // schedule; without this the silver number in the corner appeared to drop a

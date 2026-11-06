@@ -195,4 +195,9 @@
   <TraderShipsOrderArrived>Your order has landed: {THING} x{COUNT} from {FACTION}.</TraderShipsOrderArrived>
   <TraderShipsOrderFailed>The order could not be fulfilled. The {DEPOSIT} silver deposit has been refunded.</TraderShipsOrderFailed>
   <TraderShipsOrderFailedRefund>The order could not be created; the {DEPOSIT} silver deposit has been refunded in full.</TraderShipsOrderFailedRefund>
+  <TraderShipsDispatchStandalone>Independent traders</TraderShipsDispatchStandalone>
+  <TraderShipsDispatchStandaloneDesc>Orbital traders added by other mods</TraderShipsDispatchStandaloneDesc>
+  <TraderShipsDispatchStandaloneHint>Belongs to no faction, so there is no goodwill discount. The call fee is the base price.</TraderShipsDispatchStandaloneHint>
+  <TraderShipsDispatchStandaloneEmpty>No independent traders available.</TraderShipsDispatchStandaloneEmpty>
+  <TraderShipsDispatchStandaloneOwner>Note: sent by a random non-hostile faction - upsetting it counts against them.</TraderShipsDispatchStandaloneOwner>
 </LanguageData>

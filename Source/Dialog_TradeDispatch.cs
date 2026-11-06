@@ -53,6 +53,26 @@ namespace TraderShips
         private readonly Dictionary<TraderKindDef, string> tooltipCache
             = new Dictionary<TraderKindDef, string>();
 
+        /// <summary>
+        /// 是否选中了「独立商船」。
+        ///
+        /// 其它模组自带的轨道商船（如 Misc.Robots 的 AIRobotsTrader）没有 faction，
+        /// 按派系查船型永远查不到。这里给它们一个独立入口：selected 为 null，
+        /// 但 standaloneSelected 为 true。
+        /// </summary>
+        private bool standaloneSelected;
+
+        private List<TraderKindDef> standaloneCache;
+
+        /// <summary>
+        /// 左栏派系行缓存。
+        ///
+        /// Factions() 每次都 new List + 四层 LINQ + ToList，而它在 DoWindowContents 里每帧跑。
+        /// 只有筛选开关和搜索词变化时结果才会变，所以用脏标记缓存。
+        /// </summary>
+        private List<Faction> factionRows;
+        private bool factionRowsDirty = true;
+
         /// <summary>卖家与自有飞船状态：一帧内只查一次（两者都要遍历全图）。</summary>
         private int sellerFrame = -1;
         private Thing cachedSeller;
@@ -213,6 +233,17 @@ namespace TraderShips
             return cachedOwnerShip;
         }
 
+        /// <summary>独立商船（无派系的 orbital 船型），窗口内算一次。</summary>
+        private List<TraderKindDef> CachedStandalone()
+        {
+            if (standaloneCache == null)
+            {
+                standaloneCache = IncidentWorkerTraderShip.StandaloneKinds(negotiator.Map);
+            }
+
+            return standaloneCache;
+        }
+
         /// <summary>全图可用银两，窗口内只算一次。</summary>
         private int CachedSilver()
         {
@@ -267,6 +298,9 @@ namespace TraderShips
             kindsCache.Clear();
             cashCache.Clear();
             tooltipCache.Clear();
+            standaloneCache = null;
+            factionRows = null;
+            factionRowsDirty = true;
         }
 
         // ── 绘制 ───────────────────────────────────────────────────────────
@@ -303,6 +337,7 @@ namespace TraderShips
                 (filter == Filter.Tradable ? "★ " : "") + "TraderShipsDispatchFilterTradable".Translate()))
             {
                 filter = Filter.Tradable;
+                factionRowsDirty = true;
                 factionScroll = Vector2.zero;
                 if (selected != null && selected.HostileTo(Faction.OfPlayer)) selected = null;
             }
@@ -311,6 +346,7 @@ namespace TraderShips
                 (filter == Filter.All ? "★ " : "") + "TraderShipsDispatchFilterAll".Translate()))
             {
                 filter = Filter.All;
+                factionRowsDirty = true;
                 factionScroll = Vector2.zero;
             }
 
@@ -318,31 +354,103 @@ namespace TraderShips
             Rect searchRect = new Rect(rect.x + w * 2f + 20f, rect.y, rect.width - w * 2f - 20f, rect.height);
             string before = search;
             search = Widgets.TextField(searchRect, search ?? "");
-            if (before != search) factionScroll = Vector2.zero;
+            if (before != search)
+            {
+                factionRowsDirty = true;
+                factionScroll = Vector2.zero;
+            }
         }
 
         private void DrawFactionList(Rect rect)
         {
             Widgets.DrawBoxSolid(rect, new Color(0.13f, 0.13f, 0.13f, 0.6f));
 
-            List<Faction> factions = Factions();
+            if (factionRowsDirty || factionRows == null)
+            {
+                factionRows = Factions();
+                factionRowsDirty = false;
+            }
+
+            List<Faction> factions = factionRows;
+
+            // 其它模组的独立商船单独占一行，固定在列表顶部（不参与滚动），
+            // 免得玩家得在 40 多个派系里翻找。
+            // 宽度要和 DrawFactionRow 的行宽一致，否则右侧的数字与高亮会错开十几像素。
+            // 搜索派系名时不该继续显示这一行，否则玩家会以为过滤没生效。
+            bool showStandalone = search.NullOrEmpty();
+
+            Rect standaloneRect = new Rect(rect.x + 2f, rect.y + 2f, rect.width - 20f, RowHeight);
+            if (showStandalone)
+            {
+                DrawStandaloneRow(standaloneRect);
+            }
+
+            float topOffset = showStandalone ? RowHeight + 4f : 0f;
+            float scrollHeight = rect.height - topOffset;
+            Rect scrollRect = new Rect(rect.x, rect.y + topOffset, rect.width, scrollHeight);
+
+            // 高度不够时直接不画，而不是用一个 Mathf.Max 把负数悄悄变成 40 —— 那会让滚动区
+            // 压到 Close 按钮上，问题被藏起来反而更难发现。
+            if (scrollHeight <= 0f) return;
+
             if (factions.Count == 0)
             {
-                Widgets.Label(rect.ContractedBy(12f), "TraderShipsDispatchNoFactions".Translate());
+                Widgets.Label(scrollRect.ContractedBy(12f), "TraderShipsDispatchNoFactions".Translate());
                 return;
             }
 
-            Rect view = new Rect(0f, 0f, rect.width - 18f, factions.Count * RowHeight);
-            Widgets.BeginScrollView(rect.ContractedBy(2f), ref factionScroll, view);
+            Rect view = new Rect(0f, 0f, scrollRect.width - 18f, factions.Count * RowHeight);
+            Widgets.BeginScrollView(scrollRect.ContractedBy(2f), ref factionScroll, view);
 
             float y = 0f;
+            float clipTop = factionScroll.y;
+            float clipBottom = factionScroll.y + scrollRect.height;
+
             foreach (Faction faction in factions)
             {
-                DrawFactionRow(new Rect(0f, y, view.width, RowHeight), faction);
+                // 滚出视野的行不必绘制（Label / Translate / Colorize 都是白活）。
+                if (y + RowHeight >= clipTop && y <= clipBottom)
+                {
+                    DrawFactionRow(new Rect(0f, y, view.width, RowHeight), faction);
+                }
+
                 y += RowHeight;
             }
 
             Widgets.EndScrollView();
+        }
+
+        private void DrawStandaloneRow(Rect rect)
+        {
+            int count = CachedStandalone().Count;
+
+            Widgets.DrawBoxSolid(rect, new Color(0.17f, 0.17f, 0.20f, 0.9f));
+
+            if (standaloneSelected) Widgets.DrawHighlightSelected(rect);
+            else if (Mouse.IsOver(rect)) Widgets.DrawHighlight(rect);
+
+            if (Widgets.ButtonInvisible(rect))
+            {
+                standaloneSelected = true;
+                selected = null;
+                kindScroll = Vector2.zero;
+                sellerFrame = -1;
+            }
+
+            Rect nameRect = new Rect(rect.x + 12f, rect.y + 3f, rect.width - 60f, 18f);
+            Widgets.Label(nameRect, "TraderShipsDispatchStandalone".Translate());
+
+            GUI.color = Color.gray;
+            Widgets.Label(new Rect(rect.x + 12f, rect.y + 20f, rect.width - 60f, 16f),
+                "TraderShipsDispatchStandaloneDesc".Translate());
+            GUI.color = Color.white;
+
+            Text.Anchor = TextAnchor.MiddleRight;
+            GUI.color = count > 0 ? Color.white : Color.gray;
+            Widgets.Label(new Rect(rect.xMax - 32f, rect.y + 10f, 24f, 18f),
+                count > 0 ? count.ToString() : "—");
+            GUI.color = Color.white;
+            Text.Anchor = TextAnchor.UpperLeft;
         }
 
         private void DrawFactionRow(Rect rect, Faction faction)
@@ -356,6 +464,7 @@ namespace TraderShips
             if (Widgets.ButtonInvisible(rect))
             {
                 selected = faction;
+                standaloneSelected = false;
                 kindScroll = Vector2.zero;
                 sellerFrame = -1;
             }
@@ -387,6 +496,12 @@ namespace TraderShips
         private void DrawFactionDetail(Rect rect)
         {
             Widgets.DrawBoxSolid(rect, new Color(0.13f, 0.13f, 0.13f, 0.6f));
+
+            if (standaloneSelected)
+            {
+                DrawStandaloneDetail(rect);
+                return;
+            }
 
             if (selected == null)
             {
@@ -439,9 +554,16 @@ namespace TraderShips
                 Widgets.BeginScrollView(listRect, ref kindScroll, view);
 
                 float y = 0f;
+                float clipTop = kindScroll.y;
+                float clipBottom = kindScroll.y + listRect.height;
+
                 foreach (TraderKindDef kind in kinds)
                 {
-                    DrawKindRow(new Rect(0f, y, view.width, 48f), kind);
+                    if (y + 52f >= clipTop && y <= clipBottom)
+                    {
+                        DrawKindRow(new Rect(0f, y, view.width, 48f), kind);
+                    }
+
                     y += 52f;
                 }
 
@@ -518,6 +640,61 @@ namespace TraderShips
                 Close();
                 ShipPurchase.BuyShipPublic(seller, price);
             }
+        }
+
+        /// <summary>
+        /// 独立商船的详情：没有派系图标、没有好感、也没有买船入口（无主可买）。
+        /// 船型行复用 DrawKindRow —— 它内部的 PriceFor(selected, ...) 对 null 会退到原价。
+        /// </summary>
+        private void DrawStandaloneDetail(Rect rect)
+        {
+            // 背景由 DrawFactionDetail 统一画过了，这里再画一层会让独立商船页明显更暗。
+            Rect inner = rect.ContractedBy(14f);
+
+            Text.Font = GameFont.Medium;
+            Widgets.Label(new Rect(inner.x, inner.y + 2f, inner.width - 20f, 26f),
+                "TraderShipsDispatchStandalone".Translate());
+            Text.Font = GameFont.Small;
+
+            GUI.color = Color.gray;
+            Widgets.Label(new Rect(inner.x, inner.y + 26f, inner.width - 20f, 18f),
+                "TraderShipsDispatchStandaloneHint".Translate());
+            GUI.color = new Color(1f, 0.85f, 0.5f);
+            Widgets.Label(new Rect(inner.x, inner.y + 42f, inner.width - 20f, 18f),
+                "TraderShipsDispatchStandaloneOwner".Translate());
+            GUI.color = Color.white;
+
+            Widgets.DrawLineHorizontal(inner.x, inner.y + 50f, inner.width);
+
+            List<TraderKindDef> kinds = CachedStandalone();
+
+            Rect listRect = new Rect(inner.x, inner.y + 58f, inner.width, inner.height - 58f);
+
+            if (kinds.Count == 0)
+            {
+                Widgets.Label(new Rect(listRect.x, listRect.y, listRect.width, 24f),
+                    "TraderShipsDispatchStandaloneEmpty".Translate());
+                return;
+            }
+
+            Rect view = new Rect(0f, 0f, listRect.width - 18f, kinds.Count * 52f);
+            Widgets.BeginScrollView(listRect, ref kindScroll, view);
+
+            float y = 0f;
+            float clipTop = kindScroll.y;
+            float clipBottom = kindScroll.y + listRect.height;
+
+            foreach (TraderKindDef kind in kinds)
+            {
+                if (y + 52f >= clipTop && y <= clipBottom)
+                {
+                    DrawKindRow(new Rect(0f, y, view.width, 48f), kind);
+                }
+
+                y += 52f;
+            }
+
+            Widgets.EndScrollView();
         }
 
         /// <summary>

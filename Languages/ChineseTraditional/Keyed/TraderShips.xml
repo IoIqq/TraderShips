@@ -190,4 +190,9 @@
   <TraderShipsOrderArrived>預訂的貨物到了：{FACTION} 送來了 {THING} ×{COUNT}。</TraderShipsOrderArrived>
   <TraderShipsOrderFailed>這筆訂單無法履約，已退還定金 {DEPOSIT} 銀。</TraderShipsOrderFailed>
   <TraderShipsOrderFailedRefund>訂單建立失敗，定金 {DEPOSIT} 銀已全額退回。</TraderShipsOrderFailedRefund>
+  <TraderShipsDispatchStandalone>獨立商船</TraderShipsDispatchStandalone>
+  <TraderShipsDispatchStandaloneDesc>其它模組自帶的軌道商船</TraderShipsDispatchStandaloneDesc>
+  <TraderShipsDispatchStandaloneHint>不屬於任何派系，因此沒有好感折扣。呼叫費按原價。</TraderShipsDispatchStandaloneHint>
+  <TraderShipsDispatchStandaloneEmpty>沒有可呼叫的獨立商船。</TraderShipsDispatchStandaloneEmpty>
+  <TraderShipsDispatchStandaloneOwner>注意：由隨機一個非敵對派系派遣，得罪了要算在它頭上。</TraderShipsDispatchStandaloneOwner>
 </LanguageData>

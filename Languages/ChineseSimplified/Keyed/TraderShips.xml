@@ -195,4 +195,9 @@
   <TraderShipsOrderArrived>预订的货物到了：{FACTION} 送来了 {THING} ×{COUNT}。</TraderShipsOrderArrived>
   <TraderShipsOrderFailed>这笔订单无法履约，已退还定金 {DEPOSIT} 银。</TraderShipsOrderFailed>
   <TraderShipsOrderFailedRefund>订单创建失败，定金 {DEPOSIT} 银已全额退回。</TraderShipsOrderFailedRefund>
+  <TraderShipsDispatchStandalone>独立商船</TraderShipsDispatchStandalone>
+  <TraderShipsDispatchStandaloneDesc>其它模组自带的轨道商船</TraderShipsDispatchStandaloneDesc>
+  <TraderShipsDispatchStandaloneHint>不属于任何派系，因此没有好感折扣。呼叫费按原价。</TraderShipsDispatchStandaloneHint>
+  <TraderShipsDispatchStandaloneEmpty>没有可呼叫的独立商船。</TraderShipsDispatchStandaloneEmpty>
+  <TraderShipsDispatchStandaloneOwner>注意：由随机一个非敌对派系派遣，得罪了要算在它头上。</TraderShipsDispatchStandaloneOwner>
 </LanguageData>
