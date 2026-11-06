@@ -61,16 +61,114 @@ namespace TraderShips
 
         public static bool FindAnyLandingSpot(out IntVec3 spot, Faction faction, Map map, IntVec2? size)
         {
-            if (!DropCellFinder.FindSafeLandingSpot(out spot, faction, map, 0, 15, 25, size))
+            if (DropCellFinder.FindSafeLandingSpot(out spot, faction, map, 0, 15, 25, size))
             {
-                IntVec3 intVec = DropCellFinder.RandomDropSpot(map);
-                if (!DropCellFinder.TryFindDropSpotNear(intVec, map, out spot, false, false, false, size))
+                return true;
+            }
+
+            // 兜底采样要对整艘船校验，否则会返回一个"单格合法、整块放不下"的点，
+            // 上层拿去 GenPlace 就会失败（以前就是这样变成"呼叫成功但看不到船"）。
+            int w = size.HasValue ? size.Value.x : 1;
+            int h = size.HasValue ? size.Value.z : 1;
+
+            for (int i = 0; i < 20; i++)
+            {
+                IntVec3 probe = DropCellFinder.RandomDropSpot(map);
+
+                if (CanHostShip(map, probe, w, h))
                 {
-                    spot = intVec;
+                    spot = probe;
+                    return true;
+                }
+
+                IntVec3 near;
+                if (DropCellFinder.TryFindDropSpotNear(probe, map, out near, false, false, false, size)
+                    && CanHostShip(map, near, w, h))
+                {
+                    spot = near;
+                    return true;
+                }
+            }
+
+            spot = IntVec3.Invalid;
+            return false;
+        }
+
+        /// <summary>
+        /// 这块地能不能放下整艘船（size 格全空、不在雾里、地形可通行）。
+        ///
+        /// FindAnyLandingSpot 最后的兜底是"随机掉点附近的格子"，对 1×1 的货物够用，
+        /// 但船是 7×3 的多格建筑：落点合法不等于整块矩形都空着。
+        /// 不校验就会先报"已抵达"、再 GenPlace 失败 —— 玩家什么也看不到。
+        /// </summary>
+        public static bool CanHostShip(Map map, IntVec3 root, int w, int h)
+        {
+            if (map == null) return false;
+
+            for (int dx = 0; dx < w; dx++)
+            {
+                for (int dz = 0; dz < h; dz++)
+                {
+                    IntVec3 c = new IntVec3(root.x + dx, 0, root.z + dz);
+
+                    if (!c.InBounds(map)) return false;
+                    if (c.Fogged(map)) return false;
+                    if (c.GetEdifice(map) != null) return false;
+
+                    TerrainDef terrain = c.GetTerrain(map);
+                    if (terrain == null) return false;
+                    if (terrain.passability == Traversability.Impassable) return false;
                 }
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// 最后手段：在整张地图上找一块放得下船的空地。
+        ///
+        /// 玩家把着陆区堵死时不再"呼叫失败扣不扣钱"这种二选一 ——
+        /// 船会自己找个空地落下来，和现实里飞行员会绕一圈找停机坪一样。
+        ///
+        /// 先用随机采样（快，通常几十次就中），全部落空再退化成步长扫描（慢但确定）。
+        /// </summary>
+        public static bool TryFindFallbackSpot(Map map, IntVec2 size, out IntVec3 center)
+        {
+            center = IntVec3.Invalid;
+            if (map == null) return false;
+
+            int w = UnityEngine.Mathf.Max(1, size.x);
+            int h = UnityEngine.Mathf.Max(1, size.z);
+
+            // 随机采样：多格建筑的合法落点通常不少，几十次足够。
+            for (int i = 0; i < 60; i++)
+            {
+                IntVec3 probe = DropCellFinder.RandomDropSpot(map);
+                if (CanHostShip(map, probe, w, h))
+                {
+                    center = probe;
+                    return true;
+                }
+            }
+
+            // 步长扫描：按船的尺寸跳着找，避免几万次逐格判定。
+            int stride = UnityEngine.Mathf.Max(w, h);
+            CellRect rect = CellRect.WholeMap(map);
+
+            for (int x = rect.minX; x <= rect.maxX - w + 1; x += stride)
+            {
+                for (int z = rect.minZ; z <= rect.maxZ - h + 1; z += stride)
+                {
+                    IntVec3 probe = new IntVec3(x, 0, z);
+                    if (CanHostShip(map, probe, w, h))
+                    {
+                        center = probe;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public static void FindCloseLandingSpot(out IntVec3 spot, Faction faction, Map map, IntVec2? size)
@@ -198,9 +296,25 @@ namespace TraderShips
                 Messages.Message("TraderShipsLandingZoneBlocked".Translate("TraderShipsBlockedBy".Translate(blockingThing)), blockingThing, MessageTypeDefOf.NeutralEvent, true);
             }
 
-            if (!center.IsValid)
+            int shipW = ship.def.size.x;
+            int shipH = ship.def.size.z;
+
+            // 落点判定必须是"整艘船放得下"，不能只看落点那一格。
+            // 着陆区堵死、信标不方便时，先试殖民地附近的空地。
+            if (!center.IsValid || !CanHostShip(map, center, shipW, shipH))
             {
                 FindCloseLandingSpot(out center, comp.tradeShip.Faction, map, ship.def.size);
+            }
+
+            // 还是放不下就去整张图上找空地 —— 不再因为"着陆区被占"就让这次呼叫彻底失败。
+            // 只有在整张图都腾不出空间时（比如地图被墙围死）才真的失败。
+            if (!center.IsValid || !CanHostShip(map, center, shipW, shipH))
+            {
+                IntVec3 fallback;
+                if (TryFindFallbackSpot(map, ship.def.size, out fallback))
+                {
+                    center = fallback;
+                }
             }
 
             Thing faller = SkyfallerMaker.MakeSkyfaller(comp.Props.landAnimation, ship);
