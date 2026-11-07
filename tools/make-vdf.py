@@ -25,10 +25,6 @@ CHANGENOTE = ("1.8.1 - Order goods from the trade desk with a 10% deposit and th
               "out other mods' traders; a blocked landing zone now makes ships pick another spot "
               "instead of cancelling the visit. Fixes a false charge for ships that never landed, "
               "a crash when calling a standalone trader, and several per-frame UI costs.")
-              "3 days with your cargo), buildings that run their own Tick or carry ticking comps are "
-              "no longer traded, random arrivals no longer repeat the same faction back to back, and "
-              "a failed landing no longer charges you for a ship that never arrived. Also fixes a "
-              "reflection bug that could silently downgrade every faction to vanilla traders.")
 
 published_id = sys.argv[1] if len(sys.argv) > 1 else "0"
 
