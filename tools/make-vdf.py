@@ -18,7 +18,13 @@ DESC_SRC = REPO / "workshop-description.txt"
 APPID = "294100"            # RimWorld
 TITLE = "Trader Ships (Continued)"
 VISIBILITY = "0"            # 0 public / 1 friends / 2 private
-CHANGENOTE = ("1.8.1 - Goods ordering from the trade desk (pay a 10% deposit, the ship arrives in "
+CHANGENOTE = ("1.8.1 - Order goods from the trade desk with a 10% deposit and the ship arrives in "
+              "3 days carrying them; support for mod-added standalone orbital traders such as the "
+              "Misc.Robots trader ship; buildings that run their own Tick are no longer traded; "
+              "random arrivals no longer repeat the same faction back to back and no longer crowd "
+              "out other mods' traders; a blocked landing zone now makes ships pick another spot "
+              "instead of cancelling the visit. Fixes a false charge for ships that never landed, "
+              "a crash when calling a standalone trader, and several per-frame UI costs.")
               "3 days with your cargo), buildings that run their own Tick or carry ticking comps are "
               "no longer traded, random arrivals no longer repeat the same faction back to back, and "
               "a failed landing no longer charges you for a ship that never arrived. Also fixes a "

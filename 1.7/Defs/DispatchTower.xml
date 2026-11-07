@@ -31,6 +31,15 @@
     <uiIconPath>TraderShips/DispatchTower</uiIconPath>
 
     <altitudeLayer>Building</altitudeLayer>
+
+    <!--
+      可通行性对齐原版通讯台。
+      不写的话 BuildingBase 默认 Impassable —— 贸易台会变成一整块实心墙，
+      小人绕不过去，站在交互格上也可能被判定为受阻。
+    -->
+    <passability>PassThroughOnly</passability>
+    <pathCost>50</pathCost>
+    <fillPercent>0.5</fillPercent>
     <blockWind>true</blockWind>
     <canOverlapZones>false</canOverlapZones>
     <castEdgeShadows>false</castEdgeShadows>

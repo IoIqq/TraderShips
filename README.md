@@ -264,7 +264,8 @@ python tools/themestats.py <Player.log>               # 主题分布统计
 | 旧存档的船按旧时间离场 | 存档里存的是旧 `ticksUntilDeparture`，新设置不回溯 |
 | 中途移除模组会报错 | `OrbitalTraderArrival.workerClass` 指向本模组 |
 | 存档里已存在的船点「拒绝」不扣好感 | 那些船没有 `ownerFaction` 字段（1.8 新增） |
-| 家具船可能带出会 Tick 报错的模组建筑 | 部分模组的 Building 从贸易库存落地后会空引用；人船已过滤掉建筑 |
+| 会自己 Tick 的建筑不再出现在任何船上 | 1.8.1 起过滤「自己声明 Tick」或「挂着会 Tick 的 ThingComp」的建筑；代价是个别模组的功能性建筑买不到 |
+| 与 Fantasy Biotech 的「替换商船来信」冲突 | 两个模组都改写 `IncidentDef[OrbitalTraderArrival]/workerClass`，后加载的生效。把 Trader ships 排在它之后可恢复落地飞船 |
 
 ---
 

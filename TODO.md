@@ -230,6 +230,24 @@
 
 ---
 
+## 六·六、待确认的玩家反馈
+
+- [ ] **「蓝图没有取消建造按钮」**（英文用户反馈）
+  - 已核查：`Building_TradeDispatch` 未重写 `GetGizmos`，def 未覆盖 `blueprintClass`，
+    日志无蓝图相关报错。从代码看应有原版默认按钮。
+  - 需对方确认是「命令栏完全没出现」还是「缺取消这一项」，最好给截图
+- [x] **贸易台缺少 `passability` / `pathCost` / `fillPercent`**（顺手修）
+  - 原来 `BuildingBase` 默认 `Impassable`，贸易台是实心墙；已对齐原版通讯台的 `PassThroughOnly`
+
+## 六·七、已知模组冲突
+
+- [ ] **Fantasy Biotech（`vr.fantasy.biotech`）与我们的 workerClass 冲突**
+  - 两边都改写 `IncidentDef[OrbitalTraderArrival]/workerClass`（JSON 里注意转义）
+  - 当前加载顺序 FB 在后（ModsConfig 第 465 行 vs 我们第 375 行），所以它生效，
+    **我们的「随机来船」被顶成原版轨道商船 + 它的英文信件**
+  - 影响面：只有随机来船；贸易台呼叫 / 包船 / 买船 / 预订全部正常
+  - 修法：把 Trader ships 排到 Fantasy Biotech 之后，或在 `About.xml` 里加 `loadAfter`
+
 ## 七、审查中已剔除的误报
 
 子代理报告里经核实不成立、**不要再修**的：
