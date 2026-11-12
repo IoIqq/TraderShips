@@ -154,7 +154,9 @@ if vdf.is_file():
     lines = vdf.read_text(encoding="utf-8").splitlines()
     desc_line = next((l for l in lines if l.startswith('\t"description"')), None)
     if desc_line is None:
-        fail.append("VDF has no description line")
+        # 简介不再写进 VDF：工坊页面上直接编辑即可。字段缺失是刻意的，
+        # 只做提示，不拦上传。
+        warn.append("VDF carries no description (edited on the workshop page instead)")
     else:
         prefix = '\t"description"\t\t"'
         value = desc_line[len(prefix):-1]

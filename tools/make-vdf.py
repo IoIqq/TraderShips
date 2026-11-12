@@ -1,11 +1,13 @@
 """Generate the steamcmd workshop VDF for Trader Ships (Continued).
 
-Modelled on the working CrematoriumValueFilter upload, which keeps the VDF
-description as a single escaped line (literal \\n sequences, not real newlines).
+No description field: the VDF only carries the item metadata steamcmd needs to
+update the existing workshop item. A mod description can be edited on the
+workshop page itself, and leaving it out keeps the file small and pure ASCII
+apart from the changenote.
 
 Usage:
-    python make-vdf.py                  # create a new workshop item
-    python make-vdf.py <publishedfileid>  # update an existing item
+    python make-vdf.py                      # create a new workshop item
+    python make-vdf.py <publishedfileid>    # update an existing item
 """
 import sys
 import pathlib
@@ -13,20 +15,16 @@ import pathlib
 MOD_DIR = pathlib.Path(r"H:\steam\steamapps\common\RimWorld\Mods\TraderShipsDev")
 REPO = pathlib.Path(r"E:\AI\mods\rimworld\TraderShips")
 OUT = REPO / "workshop" / "workshopitem.vdf"
-DESC_SRC = REPO / "workshop-description.txt"
 
 APPID = "294100"            # RimWorld
 TITLE = "Trader Ships (Continued)"
 VISIBILITY = "0"            # 0 public / 1 friends / 2 private
 CHANGENOTE = ("1.8.2 - Rebuilt the mod against the current RimWorld 1.7 with no gameplay changes. "
               "Fixes the trade desk not showing up in the architect menu and a load-time error in "
-              "developer mode. Should work on existing saves as before.")
-
-# 中文版随英文一起放在工坊页，Steam 只支持一个 changenote 字段，所以拼在一行里。
-CHANGENOTE_ZH = ("1.8.2 - 用当前 1.7 版本重新编译，玩法没有任何改动。"
-                 "修复了贸易台不出现在建筑菜单里的问题，以及开发者模式下的加载报错。"
-                 "存档兼容性不变。")
-CHANGENOTE = CHANGENOTE + "  ｜  " + CHANGENOTE_ZH
+              "developer mode. Should work on existing saves as before. "
+              "| 1.8.2 - Recompiled against the current 1.7 build, no gameplay changes. "
+              "Fixes the trade desk missing from the architect menu and a load-time error in "
+              "developer mode. Save compatible as before.")
 
 published_id = sys.argv[1] if len(sys.argv) > 1 else "0"
 
@@ -36,12 +34,6 @@ if not MOD_DIR.is_dir():
 preview = MOD_DIR / "About" / "preview.png"
 if not preview.is_file():
     raise SystemExit(f"preview missing: {preview}")
-
-raw = DESC_SRC.read_text(encoding="utf-8-sig")
-
-# steamcmd VDF strings must be one physical line: newlines become the two
-# characters backslash + n, and embedded double quotes get escaped.
-flat = raw.replace("\r\n", "\n").replace('"', '\\"').replace("\n", "\\n").strip()
 
 
 def q(value: str) -> str:
@@ -57,7 +49,6 @@ vdf = f'''"workshopitem"
 \t"previewfile"\t\t"{preview}"
 \t"visibility"\t\t"{VISIBILITY}"
 \t"title"\t\t\t"{q(TITLE)}"
-\t"description"\t\t"{flat}"
 \t"changenote"\t\t"{q(CHANGENOTE)}"
 }}
 '''
@@ -70,7 +61,8 @@ print(f"wrote {OUT}")
 print(f"  publishedfileid : {published_id}")
 print(f"  contentfolder   : {MOD_DIR}")
 print(f"  previewfile     : {preview}")
-print(f"  description     : {len(raw)} chars source -> {len(flat)} chars escaped")
+print(f"  changenote      : {len(CHANGENOTE)} chars")
+print(f"  non-ascii bytes : {sum(1 for b in OUT.read_bytes() if b > 127)}")
 print()
 print("Upload with:")
 print(f'  H:\\steamcmd\\steamcmd.exe +login <user> +workshop_build_item "{OUT}" +quit')
