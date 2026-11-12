@@ -224,21 +224,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools/deploy-1.7.ps1
 
 脚本每次从零重建目标目录——`Copy-Item -Recurse` 到已存在的目录会把源嵌套进去，产生坏掉的 `1.7/1.7/` 结构。当前部署 171 个文件。
 
-> **编译时链的 `Assembly-CSharp` 版本会写进 DLL**。本机游戏 `1.7.5005 rev1082` 的 `Assembly-CSharp` 是 `1.7.9810.32479`；2026-10 那次编译链的是 `1.7.9805.38275`，靠运行时 `WaylithClr.LaxAssemblyBinding` 硬放行，玩家侧因此出现 `Could not load type of field ... (4) due to: Expected reference type but got type kind 17`。发版前用下面的探针对一下版本，能对上才上传。
-
-### 静态排查工具
-
-```bash
-python tools/pemeta.py 1.7/Assemblies/TraderShips.dll -v          # 元数据/AssemblyRef
-cd tools/ldprobe && dotnet build -c Release
-dotnet run -c Release --no-build -- ../../1.7/Assemblies/TraderShips.dll   # 全量签名审计
-dotnet run -c Release --no-build -- --types ../../1.7/Assemblies/TraderShips.dll
-dotnet run -c Release --no-build -- --designator "H:\steam\steamapps\common\RimWorld"
-powershell -NoProfile -ExecutionPolicy Bypass -File tools/bcl-versions.ps1  # 游戏自带 BCL 版本
-```
-
-`--designator` 是查拖拽行为用的：1.7 删掉了 `Designator.DraggableDimensions`，
-拖拽现在由 `DrawStyleCategory` → `DrawStyleDef.drawStyleType` 决定（详见 `docs/2026-11-12-designator-drag.md`）。
+> **编译时链的 `Assembly-CSharp` 版本会写进 DLL**。本机游戏 `1.7.5005 rev1082` 的 `Assembly-CSharp` 是 `1.7.9810.32479`；2026-10 那次编译链的是 `1.7.9805.38275`，靠运行时 `WaylithClr.LaxAssemblyBinding` 硬放行，玩家侧因此出现 `Could not load type of field ... (4) due to: Expected reference type but got type kind 17`。发版前先确认游戏目录的 `Assembly-CSharp.dll` 就是刚刚用来编译的那一份。
 
 ---
 

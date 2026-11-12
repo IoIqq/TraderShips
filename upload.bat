@@ -137,14 +137,6 @@ if not exist "%VDF%" (
     pause
     exit /b 1
 )
-if exist "%PY%" if exist "%REPO%\tools\vdfstats.py" (
-    "%PY%" "%REPO%\tools\vdfstats.py" "%VDF%"
-    if errorlevel 1 (
-        echo   FAIL: vdfstats.py could not parse the VDF.
-        pause
-        exit /b 1
-    )
-)
 echo   OK
 
 REM ---------- 5. DLL + GUID cache scan ----------

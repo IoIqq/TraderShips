@@ -19,9 +19,10 @@
 ### 0.1 已经查实的（静态证据，见 `docs/2026-11-12-*.md`）
 
 - [x] **DLL 与仓库源码一致**，不存在"包里的 DLL 是另一份命名空间"的情况。
-      `dotnet run --project tools/ldprobe -- --types` 输出全是 `TraderShips.*`，
-      `1.7/Patches/Designations.xml` 与 `1.7/Defs/DispatchTower.xml` 里写的类名全部命中。
-- [x] **DLL 的元数据是自洽的**：348 个字段 + 523 个方法签名全量解码，0 失败。
+      98 个 TypeDef 全是 `TraderShips.*`，`1.7/Patches/Designations.xml` 与
+      `1.7/Defs/DispatchTower.xml` 里写的类名全部命中。
+- [x] **DLL 的元数据是自洽的**：348 个字段 + 523 个方法签名全量解码，0 失败
+      （`System.Reflection.Metadata` 直读）。
       `type kind 17` 不是签名写错了，是加载器把这份签名解析到运行时类型时出错。
 - [x] **旧 DLL 引用的 `Assembly-CSharp` 是 1.7.9805.38275，本机游戏是 1.7.9810.32479**，
       差 5 个小版本。靠 `WaylithClr.LaxAssemblyBinding` 放行，但所有对游戏类型的引用
@@ -46,13 +47,18 @@
       把迭代器改写成普通方法，`d__9` 状态机字段 `<indices>5__1` 随之消失。
       这是唯一能本地消除 `type kind 17` 的手段，但**属于绕过症状**，先确认根因再决定是否上。
 
-### 0.3 新增工具（都在 `tools/`）
+### 0.3 结论怎么来的
 
-| 工具 | 用途 |
-| --- | --- |
-| `pemeta.py` | 只读元数据：TypeDef/TypeRef/AssemblyRef 计数 |
-| `ldprobe/` | `System.Reflection.Metadata` 全量签名审计、`--types` 类型清单、`--designator` 拖拽相关成员 |
-| `bcl-versions.ps1` | 打印游戏自带 BCL 版本，对照 mod 的 AssemblyRef |
+排查用的临时脚本（PE 元数据读取、`System.Reflection.Metadata` 签名审计、
+VDF 结构自检）已在查完后删除，没有留在仓库里。下面这些结论可以直接复现：
+
+- `[Reflection.AssemblyName]::GetAssemblyName('...\RimWorld\Assembly-CSharp.dll').FullName`
+  → 游戏侧程序集版本
+- 对 `1.7/Assemblies/TraderShips.dll` 同样调用 → 只能拿到自身版本，
+  **编译时引用的 `Assembly-CSharp` 版本要看 DLL 的 AssemblyRef 表**；
+  用任意 PE 元数据工具（如 `dotnet-ildasm`、ILSpy 命令行）看 AssemblyRef 即可
+- 拖拽开关：`Assembly-CSharp` 里 `Verse.DrawStyleDef` 有 `drawStyleType` 字段，
+  `Verse.Designator` 有 `DragDrawMeasurements` / `DrawStyleCategory` 两个 virtual 属性
 
 ---
 
