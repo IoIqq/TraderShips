@@ -18,12 +18,15 @@ DESC_SRC = REPO / "workshop-description.txt"
 APPID = "294100"            # RimWorld
 TITLE = "Trader Ships (Continued)"
 VISIBILITY = "0"            # 0 public / 1 friends / 2 private
-CHANGENOTE = ("1.8.2 - Rebuilt against the current Assembly-CSharp (1.7.9810). The shipped DLL was "
-              "compiled against 1.7.9805 and only loaded thanks to the engine's lax assembly binding, "
-              "which showed up as \"Could not load type of field ... (4) due to: Expected reference "
-              "type but got type kind 17\", a missing trade desk in the architect menu (its ThingClass "
-              "could not be resolved), and an exception raised while the two landing-zone designators "
-              "were being registered. No gameplay changes; no save impact.")
+CHANGENOTE = ("1.8.2 - Rebuilt the mod against the current RimWorld 1.7 with no gameplay changes. "
+              "Fixes the trade desk not showing up in the architect menu and a load-time error in "
+              "developer mode. Should work on existing saves as before.")
+
+# 中文版随英文一起放在工坊页，Steam 只支持一个 changenote 字段，所以拼在一行里。
+CHANGENOTE_ZH = ("1.8.2 - 用当前 1.7 版本重新编译，玩法没有任何改动。"
+                 "修复了贸易台不出现在建筑菜单里的问题，以及开发者模式下的加载报错。"
+                 "存档兼容性不变。")
+CHANGENOTE = CHANGENOTE + "  ｜  " + CHANGENOTE_ZH
 
 published_id = sys.argv[1] if len(sys.argv) > 1 else "0"
 
