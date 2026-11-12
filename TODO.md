@@ -2,6 +2,7 @@
 
 > 2026-11-07　版本 **1.8.1**（已发布）　部署 171 文件　创意工坊 ManifestID 3549964106088999483
 > 2026-11-12　按玩家 feedback 重新编译并部署（DLL 从 `Assembly-CSharp 1.7.9805` 换成 `1.7.9810`），待复测
+> 2026-11-13　版本升 **1.8.2**；VDF 去掉 description（steamcmd 解析中文长描述会崩）；**工坊尚未上传成功**
 
 ---
 
@@ -46,6 +47,21 @@
 - [ ] 需要根因时：在 `Area_LandingZone.LandingLocations()` 上做 A/B ——
       把迭代器改写成普通方法，`d__9` 状态机字段 `<indices>5__1` 随之消失。
       这是唯一能本地消除 `type kind 17` 的手段，但**属于绕过症状**，先确认根因再决定是否上。
+
+### 0.2b 工坊上传阻塞（2026-11-13）
+
+- [ ] `upload.bat` 跑到 steamcmd 那步报
+      `src\vstdlib\keyvaluessystem.cpp (395) : Assertion Failed: CKeyValuesSystem::AddStringToPool: key name too long (1954 chars)`。
+      登录走缓存凭据（`Logging in user 'rb3481141298' ... OK`），**崩溃发生在读 VDF 之后**。
+- [x] 已定位算术：`1954 = 10122(文件字节) − 2×4084(名字上限)`，解析器用「剩余字节数」报错，
+      起点落在 description 的中文段落里 → 疑似中文被按单字节读、整段被当成未闭合 token。
+- [x] 已处置：VDF 去掉 `description`，整份文件纯 ASCII（`non-ascii bytes = 0`），
+      changenote 改为英文双语并列；`preflight.py` 的「无 description」由 FAIL 降为 WARN。
+- [ ] **待验证**：用新 VDF 再跑一次 `upload.bat`，确认出现本次新增的
+      `Upload finished for workshop item 3828162134 : OK`。
+- [ ] 若仍崩：换 steamcmd 旧版（当前 `1794425457`），或把 changenote 压到 200 字符以内再试。
+- [ ] 上传成功后：新 ManifestID 写进本文件头部；`workshop-description.txt` 的文案手动贴回工坊页面
+      （VDF 已不再覆盖简介）。
 
 ### 0.3 结论怎么来的
 

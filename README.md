@@ -7,7 +7,7 @@
 
 这是 [AUTOMATIC1111 原版 Trader ships](https://github.com/AUTOMATIC1111/TraderShips) 的 **1.7（Waylith 引擎）** 续作。原始设计、美术与代码均为原作者成果；本分支在移植之外还扩展了大量玩法。
 
-当前版本：**1.8.0**　｜　支持 1.1 ~ 1.7
+当前版本：**1.8.2**　｜　支持 1.1 ~ 1.7
 
 ---
 
@@ -173,6 +173,8 @@ Textures/TraderShips/Factions/<派系defName>.png
 
 ## 代码结构
 
+完整目录说明见 [docs/PROJECT-MAP.md](docs/PROJECT-MAP.md)。核心文件：
+
 ```
 Source/
 ├── CompShip.cs                         飞船组件：生成、索赔、击毁、偷渡、离开
@@ -212,7 +214,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools/build.ps1
 
 脚本做三件事：用 `tools/make-rsp.py` 生成响应文件（引用 `Microsoft.NETCore.App/10.0.7` 的托管程序集 + 游戏的 `Assembly-CSharp.dll` / `UnityStubs.dll` / `Waylith.dll`），调 `sdk/9.0.306/Roslyn/bincore/csc.dll`，最后打印 MD5。
 
-关键点：必须带 `-nostdlib+ -noconfig`，否则会引入 SDK 9 的 `System.Runtime 9.0.0.0` 并报 `CS1705`。`build17.rsp` 没开 `/deterministic`，所以 **MD5 每次编译都不同**，体积恒为 121856——不要用 MD5 判断是否同一份代码。
+关键点：必须带 `-nostdlib+ -noconfig`，否则会引入 SDK 9 的 `System.Runtime 9.0.0.0` 并报 `CS1705`。`build17.rsp` 没开 `/deterministic`，所以 **MD5 每次编译都不同**，体积恒为 141312——不要用 MD5 判断是否同一份代码，要比就比源码。
 
 编译前必须**完全退出游戏**，否则 DLL 被锁会报 `CS2012`。
 
@@ -236,9 +238,22 @@ upload.bat
 
 账号填 `rb3481141298`（走 steamcmd 缓存凭据），密码由 steamcmd 自己询问，脚本不保存。
 
-脚本依次：从 `workshop-description.txt` 重新生成 VDF（自动带上 `PublishedFileId.txt` 里的 ID，避免新建重复条目）→ 跑 28 项预检 → 检查 steamcmd / VDF / DLL 唯一性 → 上传 → 到日志里找**本次运行新增的** `Upload finished for workshop item ... : OK`。
+脚本依次：生成 VDF（自动带上 `PublishedFileId.txt` 里的 ID，避免新建重复条目）→ 跑预检 → 检查 steamcmd / VDF / DLL 唯一性 → 上传 → 到日志里找**本次运行新增的** `Upload finished for workshop item ... : OK`。
 
 > 早期版本的校验会取全日志最后一条成功记录，于是把上一次会话的旧记录当成这次的成功——现在只认本次运行之后的行。
+
+### VDF 不含简介
+
+`workshop/workshopitem.vdf` 只有 `appid` / `publishedfileid` / `contentfolder` / `previewfile` / `visibility` / `title` / `changenote` 七个字段，**没有 `description`**。
+
+两个原因：
+
+1. steamcmd 的 KeyValues 解析器对**中文长描述**会报 `CKeyValuesSystem::AddStringToPool: key name too long (1954 chars)` 并中断上传——那个 1954 正是「文件字节数 − 2×校验器名字上限」，说明它把整段中文当成了一个未闭合的 token。去掉 description 后整份 VDF 纯 ASCII，问题消失。
+2. 简介本来就更适合在工坊页面上直接编辑，不必每次发版都塞进 VDF。
+
+代价：**更新条目不会覆盖工坊页面上现有的简介**。文案底稿仍保存在 `workshop-description.txt`（中英双语长文），改版时手动贴到页面即可。
+
+预检里「VDF has no description」这条因此从 FAIL 降为 WARN。
 
 ---
 
@@ -255,6 +270,13 @@ python tools/themestats.py <Player.log>               # 主题分布统计
 ```
 
 用的是 upload.bat 里那个 Python（dsh-primary-runtime），**注意不要放名为 types.py 的脚本进 tools/**——它会遮蔽标准库 types，让所有 import 崩掉。
+
+---
+
+## 目录说明
+
+除代码结构外，`About` / `1.7` / `Languages` / `tools` / `workshop` / `docs` 各自放什么、
+哪些不进仓库，见 **[docs/PROJECT-MAP.md](docs/PROJECT-MAP.md)**。
 
 ---
 

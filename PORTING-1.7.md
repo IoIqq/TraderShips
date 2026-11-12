@@ -280,3 +280,28 @@ foreach (DebugActionNode item in (IEnumerable<DebugActionNode>)methodInfo.Invoke
 
 `DebugNodeInjector` 保留：`InitActions` 仍遍历缓存过的 `GenTypes.AllTypes`，
 重度模组环境下可能漏掉本程序集。
+
+---
+
+## 后续：1.8.2 的一次重新编译（2026-11-13）
+
+2026-10 那次编译时链的是 `Assembly-CSharp 1.7.9805.38275`，而游戏已升到 `1.7.9810.32479`。
+`RimWorld.runtimeconfig.json` 里的 `WaylithClr.LaxAssemblyBinding: true` 让旧 DLL 照常加载，
+但玩家侧出现了：
+
+```
+Could not execute post-long-event action. Exception: System.AggregateException:
+  (Could not load type of field 'TraderShips.Area_LandingZone+<LandingLocations>d__9:<indices>5__1' (4)
+   due to: Expected reference type but got type kind 17)
+```
+
+配套症状：贸易台不出现在建筑菜单、两个着陆区设计器不出现。
+
+检查结论（详见 `docs/2026-11-12-deploy-mismatch.md`）：
+
+- DLL 的 348 个字段 / 523 个方法签名**全部可解码**，元数据本身没问题
+- `type kind 17` 是 `ELEMENT_TYPE_VALUETYPE`，说明加载器把引用类型的签名解析成了值类型
+- 唯一差异是编译时引用的 `Assembly-CSharp` 比游戏旧
+
+处置：用当前游戏程序集重新编译、重新部署，版本升到 1.8.2。**不要再用「旧一点的
+Assembly-CSharp 也能加载」来省事**——宽松绑定只是让错误延后到字段解析阶段。
