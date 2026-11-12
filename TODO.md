@@ -1,6 +1,58 @@
 # 待办 / 验证清单
 
 > 2026-11-07　版本 **1.8.1**（已发布）　部署 171 文件　创意工坊 ManifestID 3549964106088999483
+> 2026-11-12　按玩家 feedback 重新编译并部署（DLL 从 `Assembly-CSharp 1.7.9805` 换成 `1.7.9810`），待复测
+
+---
+
+## 零、2026-11-12 玩家反馈（Steam，11 月 11 日 18:06）
+
+玩家环境：原版 + Royalty/Biotech/Ideology/Anomaly，只前置 Harmony，无其他模组。
+
+反馈三件事：
+
+1. **建筑规划里找不到贸易台**
+2. **区域规划里的"着陆区扩展 / 清除"只能一格一格点，不能拉一片**
+3. **开发者模式报错**：
+   `Could not execute post-long-event action. Exception: System.AggregateException: ... (Could not load type of field 'TraderShips.Area_LandingZone+<LandingLocations>d__9:<indices>5__1' (4) due to: Expected reference type but got type kind 17)`
+
+### 0.1 已经查实的（静态证据，见 `docs/2026-11-12-*.md`）
+
+- [x] **DLL 与仓库源码一致**，不存在"包里的 DLL 是另一份命名空间"的情况。
+      `dotnet run --project tools/ldprobe -- --types` 输出全是 `TraderShips.*`，
+      `1.7/Patches/Designations.xml` 与 `1.7/Defs/DispatchTower.xml` 里写的类名全部命中。
+- [x] **DLL 的元数据是自洽的**：348 个字段 + 523 个方法签名全量解码，0 失败。
+      `type kind 17` 不是签名写错了，是加载器把这份签名解析到运行时类型时出错。
+- [x] **旧 DLL 引用的 `Assembly-CSharp` 是 1.7.9805.38275，本机游戏是 1.7.9810.32479**，
+      差 5 个小版本。靠 `WaylithClr.LaxAssemblyBinding` 放行，但所有对游戏类型的引用
+      都变成宽松绑定 —— 这条最可疑，已用当前游戏头文件重新编译。
+- [x] **CLI 元数据头是 `1.1 / v4.0.30319`**，与创意工坊里 246 个 1.7 模组的分布一致，
+      不是"编译目标太老"。
+- [x] **拖拽的真实开关已从元数据读出来**：`Designator.DrawStyleCategory` →
+      `DrawStyleDef.drawStyleType`。原版 `Designator_AreaHomeExpand` 在元数据里零成员，
+      说明"能拖一片"不可能靠给设计器加成员实现。见 `docs/2026-11-12-designator-drag.md`。
+
+### 0.2 待复测 / 待补证据
+
+- [ ] 用新编译的 DLL（`md5 b63389e2…`，引用 `Assembly-CSharp 1.7.9810.32479`）实机验证：
+      贸易台是否出现在"杂项"分类，两个设计器是否出现在"区域"分类，`AggregateException` 是否消失。
+- [ ] 若报错仍在：让玩家在开发者模式导出完整日志（`Player.log`），
+      确认他那台机器的 `Assembly-CSharp` 版本 —— 那是唯一能同时解释
+      "类加载失败 + 贸易台不见 + 设计器异常"的输入。
+- [ ] 若设计器出现但仍只能单格点：确认设计器面板上有没有那排
+      直线/矩形/填充矩形按钮（`DrawStyle` UI）。没有 = `DrawStyleCategory` 没接上；
+      有 = 拖拽运行时被 `CanDesignateCell` 拒了（"已是目标状态就返回 false"这条判据会打断擦边拖拽）。
+- [ ] 需要根因时：在 `Area_LandingZone.LandingLocations()` 上做 A/B ——
+      把迭代器改写成普通方法，`d__9` 状态机字段 `<indices>5__1` 随之消失。
+      这是唯一能本地消除 `type kind 17` 的手段，但**属于绕过症状**，先确认根因再决定是否上。
+
+### 0.3 新增工具（都在 `tools/`）
+
+| 工具 | 用途 |
+| --- | --- |
+| `pemeta.py` | 只读元数据：TypeDef/TypeRef/AssemblyRef 计数 |
+| `ldprobe/` | `System.Reflection.Metadata` 全量签名审计、`--types` 类型清单、`--designator` 拖拽相关成员 |
+| `bcl-versions.ps1` | 打印游戏自带 BCL 版本，对照 mod 的 AssemblyRef |
 
 ---
 

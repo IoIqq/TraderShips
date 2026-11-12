@@ -25,6 +25,8 @@ tools/build17.rsp
 # python bytecode (never ship a module named like a stdlib module here)
 tools/__pycache__/
 __pycache__/
+tools/ldprobe/bin/
+tools/ldprobe/obj/
 
 # editor / manual backups
 About/*.legacy-backup
