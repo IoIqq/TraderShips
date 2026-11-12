@@ -18,13 +18,12 @@ DESC_SRC = REPO / "workshop-description.txt"
 APPID = "294100"            # RimWorld
 TITLE = "Trader Ships (Continued)"
 VISIBILITY = "0"            # 0 public / 1 friends / 2 private
-CHANGENOTE = ("1.8.1 - Order goods from the trade desk with a 10% deposit and the ship arrives in "
-              "3 days carrying them; support for mod-added standalone orbital traders such as the "
-              "Misc.Robots trader ship; buildings that run their own Tick are no longer traded; "
-              "random arrivals no longer repeat the same faction back to back and no longer crowd "
-              "out other mods' traders; a blocked landing zone now makes ships pick another spot "
-              "instead of cancelling the visit. Fixes a false charge for ships that never landed, "
-              "a crash when calling a standalone trader, and several per-frame UI costs.")
+CHANGENOTE = ("1.8.2 - Rebuilt against the current Assembly-CSharp (1.7.9810). The shipped DLL was "
+              "compiled against 1.7.9805 and only loaded thanks to the engine's lax assembly binding, "
+              "which showed up as \"Could not load type of field ... (4) due to: Expected reference "
+              "type but got type kind 17\", a missing trade desk in the architect menu (its ThingClass "
+              "could not be resolved), and an exception raised while the two landing-zone designators "
+              "were being registered. No gameplay changes; no save impact.")
 
 published_id = sys.argv[1] if len(sys.argv) > 1 else "0"
 
